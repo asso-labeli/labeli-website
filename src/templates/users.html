@@ -1,0 +1,29 @@
+::if selectedUser::
+
+	::selectedUser.firstName::
+
+
+::else::
+
+	::foreach oneUser currentUsers::
+		<a class="user" href="users/::user.id::" style="background-image : url('/static/images/avatar.png');">::oneUser.firstName::<br />::oneUser.lastName::<br /> <span class="role">::oneUser.role::</span> </a>
+	::end::
+
+	<h1>Anciens membres</h1>
+	::foreach oneUser oldUsers::
+		<a class="user old" href="users/::user.id::">::oneUser.firstName:: ::oneUser.lastName::<br /></a>
+	::end::
+
+	::if user.logged && user.isAdmin()::
+		<section>
+			<h1>Ajouter un membre</h1>
+			<form action="#" method="POST" id="createUser-form" class="inline">
+				<input type="text" placeholder="Prénom" name="firstName" />
+				<input type="text" placeholder="Nom" name="lastName" />
+				<input type="email" placeholder="Email" name="email" />
+				<input type="submit" value="Ajouter" />
+			</form>
+		</section>
+	::end::
+
+::end::

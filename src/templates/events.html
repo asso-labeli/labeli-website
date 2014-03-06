@@ -1,0 +1,67 @@
+::if group::
+
+	<section class="group" style="background-image : url('/static/images/background.png');">
+		<h1>::group.name::</h1>
+		<div class="description">::raw group.description::</div>
+	</section>
+
+	<section class="center">
+		::if group.isUserIn::
+			::if group.isUserAdmin::
+				Vous êtes administrateur de cet évènement ! <a class="button" id="editGroupLink">Éditer l'évènement</a>
+			::else::
+				Vous participez à cet évènement ! <a class="button" id="leaveGroupLink">Me retirer de cet évènement</a>
+			::end::
+		::else::
+			Vous ne participez pas à cet évènement ! <a class="button" id="joinGroupLink">Participer à cet évènement</a>
+		::end::
+	</section>
+
+	<div class="groupInfos">
+		<div class="members">
+			<h2>Participants</h2>
+			<br />
+			::foreach groupUser group.users::
+				<a class="user" href="users/::groupUser.user.id::" style="background-image : url('::groupUser.user.picture::.png');">
+					::groupUser.user.firstName::<br />
+					::groupUser.user.lastName::<br />
+					<span class="role">::groupUser.label::</span>
+				</a>
+				<br />
+			::end::
+		</div>
+		<div class="messages">
+			<h2>Messages</h2>
+			<div class="chatBox" href="::group.getTypeString()::/::group.id::">
+				<div class="messages">
+					<!-- <div class="chatMessage">
+						<div class="author" style="background : url('::user.picture::-33x33.png') no-repeat;">Alix le 31/12/9999</div>
+						<div class="content">Lorem ipsum dolor sit amet, consectetur adipisicing elit. Aperiam, dolorem optio consectetur expedita</div>
+					</div>-->
+				</div>
+				<form class="inline sendMessage">
+					<input type="text" placeholder="Envoyer un message" />
+					<input type="submit" value="Envoyer" />
+				</form>
+			</div>
+		</div>
+	</div>
+
+::else::
+
+	::if groups.length == 0::
+		<section class="center">
+			Aucun évènement en ce moment. :(
+		</section>
+	::end::
+	::foreach group groups::
+		<a href="projects/::group.id::" class="group" style="background : url('/static/images/background.png') repeat;">
+			<div class="info">
+				<div class="title">::group.name::</div>
+				<div class="status">En cours</div>
+				<div class="author">par ::group._author.firstName:: ::group._author.lastName::</div>
+			</div>
+		</a>
+	::end::
+
+::end::

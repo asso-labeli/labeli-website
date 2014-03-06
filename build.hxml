@@ -1,0 +1,26 @@
+# Server
+-cp src
+-main Server 
+-lib templo
+-php server 
+-cmd "temploc2 -cp src/templates -output server/templates -php --compact events.html"
+-cmd "temploc2 -cp src/templates -output server/templates -php --compact index.html"
+-cmd "temploc2 -cp src/templates -output server/templates -php --compact login.html"
+-cmd "temploc2 -cp src/templates -output server/templates -php --compact presentation.html"
+-cmd "temploc2 -cp src/templates -output server/templates -php --compact projects.html"
+-cmd "temploc2 -cp src/templates -output server/templates -php --compact teams.html"
+-cmd "temploc2 -cp src/templates -output server/templates -php --compact users.html"
+-cmd "temploc2 -cp src/templates -output server/templates -php --compact votes.html"
+-cmd "temploc2 -cp src/templates -output server/templates -php --compact messages.html"
+-cmd "temploc2 -cp src/templates -output server/templates -php --compact mails/format.html"
+-cmd "temploc2 -cp src/templates -output server/templates -php --compact mails/register.html"
+
+--next
+
+# Client
+-cp src
+-main Client
+-lib jQueryExtern
+--macro jQuery.haxe.Config.setVersion('1.10.2')
+--macro jQuery.haxe.Config.setNative('jQuery')
+-js static/client.js

@@ -1,0 +1,69 @@
+<section>
+	<h1>Envoyer un mail</h1>
+	
+	<form action="#" method="POST">
+		<label>Destinataire</label><br />
+		::if user.isAdmin()::
+			::if formData.recipients == "all"::
+				<input type="radio" name="recipients" value="all" id="all" checked="checked" />
+			::else::
+				<input type="radio" name="recipients" value="all" id="all" />
+			::end::
+		::else::
+			<input type="radio" name="recipients" value="all" id="all" disabled="disabled" />
+		::end::
+		<label for="all">Tous les membres</label><br />
+		
+		::if formData.recipients == "bureau"::
+			<input type="radio" name="recipients" value="bureau" id="bureau" checked="checked" />
+		::else::
+			<input type="radio" name="recipients" value="bureau" id="bureau" />
+		::end::
+		<label for="bureau">Tout le bureau</label><br />
+
+		::if formData.recipients == "user"::
+			<input type="radio" name="recipients" value="user" id="user" checked="checked" />
+		::else::
+			<input type="radio" name="recipients" value="user" id="user" />
+		::end::
+		<label for="user">Un membre :</label>
+		<select name="user">
+			::foreach oneUser users::
+				::if formData.selectedUser == oneUser.id::
+					<option value="::oneUser.id::" selected="selected">::oneUser.firstName:: ::oneUser.lastName::</option>
+				::else::
+					<option value="::oneUser.id::">::oneUser.firstName:: ::oneUser.lastName::</option>
+				::end::
+			::end::
+		</select><br />
+
+		<br />
+		<label for="title">Titre</label><br />
+		<input type="text" name="title" id="title" value="::formData.title::"/><br />
+		<label for="mailContent">Contenu</label><br />
+		<textarea name="content" id="mailContent">::formData.content::</textarea><br />
+
+		::if user.isAdmin()::
+			<label>Options</label><br />
+			::if formData.format::
+				<input type="checkbox" name="format" id="format" checked="checked" /><label for="format">Préformatter le mail</label><br />
+			::else::
+				<input type="checkbox" name="format" id="format" /><label for="format">Préformatter le mail</label><br />
+			::end::
+
+			::if formData.global::
+				<input type="checkbox" name="global" id="global" checked="checked" /><label for="global">Envoyer depuis contact@labeli.org</label><br />
+			::else::
+				<input type="checkbox" name="global" id="global" /><label for="global">Envoyer depuis contact@labeli.org</label><br />
+			::end::
+		::end::
+		<input type="submit" value="Envoyer" name="send" />
+		<input type="submit" value="Prévisualiser" name="preview" />
+	</form>
+</section>
+::if preview::
+<h2>Prévisualisation</h2>
+<section>
+	<iframe src="/tmp/newsletter.html"></iframe>
+</section>
+::end::

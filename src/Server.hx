@@ -1,305 +1,172 @@
-import php.Session;
-import sys.io.File;
-import data.*;
-
-using StringTools;
-using DateTools;
+import haxe.web.Dispatch;
+import php.Web;
 
 class Server
 {
-	static var instance : Server;
-	static var config : Dynamic;
-
-	private var user : User;
+	var api : Api;
+	var result = "";
+	var includeTemplate = true;
 
 	static function main()
 	{
-		// Start php session
-		Session.start();
-
-		// Load config
-		config = haxe.Json.parse(File.getContent("config.json"));
-
-		// Load Database
-		sys.db.Manager.cnx = sys.db.Mysql.connect(config.database);
-		if(!sys.db.TableCreate.exists(User.manager))  { sys.db.TableCreate.create(User.manager);  }
-		if(!sys.db.TableCreate.exists(Group.manager)) { sys.db.TableCreate.create(Group.manager); }
-		if(!sys.db.TableCreate.exists(Vote.manager)) { sys.db.TableCreate.create(Vote.manager); }
-		if(!sys.db.TableCreate.exists(GroupUser.manager)) { sys.db.TableCreate.create(GroupUser.manager); }
-		if(!sys.db.TableCreate.exists(Message.manager)) { sys.db.TableCreate.create(Message.manager); }
-
-		// Load templates
 		templo.Loader.BASE_DIR = "templates";
 		templo.Loader.TMP_DIR = "templates/";
 		templo.Loader.MACROS = null;
 		templo.Loader.OPTIMIZED = true;
-
-		// Start server
-		instance = new Server();
-		var context = new haxe.remoting.Context();
-		context.addObject("api",instance); 
-		haxe.remoting.HttpConnection.handleRequest(context);
+	
+		var server = new Server();
 	}
 
 	public function new()
 	{
-		if(Session.exists("id"))
+		api = new Api();
+
+		try
 		{
-			user = User.manager.get(Session.get("id"));
-			user.logged = true;
+			Dispatch.run(Web.getURI().substring(4), Web.getParams(), this);
 		}
+		catch(error : DispatchError)
+		{
+			do404(new Dispatch(Web.getURI().substring(4), Web.getParams()));
+		}
+
+		if(Web.getParams().get("template") == "false")
+			includeTemplate = false;
+
+		if(includeTemplate)
+			Sys.print(new templo.Loader("global.html").execute({content : result, currentUser : api.getCurrentUser()}));
 		else
-			user = new User();
+			Sys.print(result);
 	}
 
-	public function login(username : String, password : String) : Dynamic
+	public function do404(dispatch : Dispatch)
 	{
-		var newUser = User.manager.select($username == username && $passwordHash == User.encodePassword(password));
-		
-		if(newUser == null)
-			return null;
+		trace("Error 404");
+	}
+
+	public function doDefault()
+	{
+		doIndex(new Dispatch(Web.getURI(), Web.getParams()));
+	}
+	public function doEvents(dispatch : Dispatch)
+	{
+		var data : Dynamic;
+		if(dispatch.parts.length == 0)
+			data = {currentUser : api.getCurrentUser(), groups : api.getEvents()};
 		else
-		{
-			user = newUser;
-			user.logged = true;
-		}
+			data = {currentUser : api.getCurrentUser(), group : api.getEvent(Std.parseInt(dispatch.parts[0]))};
 
-		Session.set("id", user.id);
-
-		return
-		{
-			firstName : user.firstName,
-			lastName : user.lastName,
-			id : user.id,
-			picture : user.picture
-		};
+		result = new templo.Loader("events.html").execute(data);
 	}
-
-	public function logout() : Bool
+	public function doIndex(dispatch : Dispatch)
 	{
-		Session.remove("id");
-		return true;
+		var data = {currentUser : api.getCurrentUser()};
+		result = new templo.Loader("index.html").execute(data);
 	}
-
-	public function createUser(firstName : String, lastName : String, email : String) : Bool
+	public function doLogin(dispatch : Dispatch)
 	{
-		if(user.isAdmin())
-		{
-			var newUser = new User();
-			newUser.firstName = firstName;
-			newUser.lastName = lastName;
-			newUser.email = email;
-
-			var password = "";
-				for(i in 0...16)
-					password += String.fromCharCode(65+Std.random(90-65));
-
-			newUser.username = new String(newUser.firstName+"."+newUser.lastName).toLowerCase();
-			newUser.created = Date.now();
-			newUser.author = user;
-			newUser.passwordHash = User.encodePassword(password);
-			newUser.type = User.USER;
-			newUser.role = "Membre";
-			newUser.insert();
-
-			var mail = new mail.FormattedMail("Bienvenue !");
-			mail.sender = {name : "Contact - Label[i]", email : "contact@labeli.org"};
-			mail.recipients.push({name : newUser.firstName+" "+newUser.lastName, email : newUser.email});
-			mail.subject = "Label[i] - Bienvenue";
-			mail.content = new templo.Loader("mails/register.html").execute({username : newUser.username, password : password});
-			return mail.send();
-		}
-		return false;
+		var data = {currentUser : api.getCurrentUser()};
+		result = new templo.Loader("login.html").execute(data);
 	}
-
-	public function createGroup(name : String, userId : Int, type : String) : Bool
+	public function doMessages(dispatch : Dispatch)
 	{
-		var newGroup = new Group();
-		newGroup.author = User.manager.get(userId);
-		newGroup.type = switch(type)
-		{
-			case "team" : Group.TEAM;
-			case "event" : Group.EVENT;
-			default : Group.PROJECT;
-		};
-		newGroup.status = Group.INVOTE;
-		newGroup.name = name;
-		newGroup.description = "";
-		newGroup.date = null;
-		newGroup.insert();
-
-		new GroupUser(newGroup, newGroup.author, "Créateur", true).insert();
-
-		return true;
+		var data = {currentUser : api.getCurrentUser()};
+		result = new templo.Loader("messages.html").execute(data);
 	}
-
-	public function submitVote(groupId : Int, value : Int)
+	public function doPresentation(dispatch : Dispatch)
 	{
-		if(value != -1 && value != 0 && value != 1)
-			return false;
-
-		var group = Group.manager.get(groupId);
-
-		var vote = Vote.manager.select($user == user && $group == group, true);
-		if(vote == null)
-			new Vote(group, user, value).insert();
+		var data = {currentUser : api.getCurrentUser()};
+		result = new templo.Loader("presentation.html").execute(data);
+	}
+	public function doProjects(dispatch : Dispatch)
+	{
+		var data : Dynamic;
+		if(dispatch.parts.length == 0)
+			data = {currentUser : api.getCurrentUser(), groups : api.getProjects()};
 		else
-		{
-			vote.value = value;
-			vote.update();
-		}
-		return true;
+			data = {currentUser : api.getCurrentUser(), group : api.getProject(Std.parseInt(dispatch.parts[0]))};
+		result = new templo.Loader("projects.html").execute(data);
+	}
+	public function doTeams(dispatch : Dispatch)
+	{
+		var data : Dynamic;
+		if(dispatch.parts.length == 0)
+			data = {currentUser : api.getCurrentUser(), groups : api.getTeams()};
+		else
+			data = {currentUser : api.getCurrentUser(), group : api.getTeam(Std.parseInt(dispatch.parts[0]))};
+
+		result = new templo.Loader("teams.html").execute(data);
+	}
+	public function doUsers(dispatch : Dispatch)
+	{
+		var data : Dynamic;
+		if(dispatch.parts.length == 0)
+			data = {currentUser : api.getCurrentUser(), users : api.getUsers()};
+		else
+			data = {currentUser : api.getCurrentUser(), user : api.getUser(Std.parseInt(dispatch.parts[0]))};
+
+		result = new templo.Loader("users.html").execute(data);
+	}
+	public function doVotes(dispatch : Dispatch)
+	{
+		var data = {currentUser : api.getCurrentUser(), users : api.getUsers(), groups : api.getVotes()};
+		result = new templo.Loader("votes.html").execute(data);
+	}
+	public function doStyle(dispatch : Dispatch)
+	{
+		includeTemplate = false;
+		Resources.get("style/"+dispatch.parts.join("/"), true);
+	}
+	public function doScripts(dispatch : Dispatch)
+	{
+		includeTemplate = false;
+		Resources.get("scripts/"+dispatch.parts.join("/"), true);
+	}
+	public function doImages(dispatch : Dispatch)
+	{
+		includeTemplate = false;
+		Resources.get("images/"+dispatch.parts.join("/"), true);
+	}
+	public function doFiles(dispatch : Dispatch)
+	{
+		includeTemplate = false;
+		Resources.get("files/"+dispatch.parts.join("/"), true);
 	}
 
-	public function leaveGroup(groupId : Int) : Bool
+	public function doUpload(dispatch : Dispatch)
 	{
-		GroupUser.manager.select($gid == groupId && $user == user).delete();
-		return true;
-	}
+		includeTemplate = false;
 
-	public function joinGroup(groupId : Int) : Bool
-	{
-		new GroupUser(Group.manager.get(groupId), user, "Membre", false).insert();
-		return true;
-	}
-
-	public function editGroup(groupId : Int, name : String, description : String, imageData : String)
-	{
-		var group = Group.manager.get(groupId, true);
-		group.name = name;
-		group.description = description;
-		group.update();
-
-		if(imageData != "")
-		{
-			sys.io.File.saveBytes("test.png", haxe.io.Bytes.ofString(haxe.crypto.BaseCode.decode(imageData, "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/")));
-		}
-
-		return true;
-	}
-
-	public function addMessage(thread : String, message : String) : Bool
-	{
-		new Message(thread, message, user).insert();
-		return true;
-	}
-
-	public function getMessages(thread : String, since : Float)
-	{
-		var result = new Array<Dynamic>();
-		for(message in Message.manager.search($thread == thread && $created > Date.fromTime(since), {orderBy : created}))
-			result.push(message.getObject());
-		return result;
-	}
-
-	public function getPage(url : String) : String
-	{
-		if(url == "")
-			url = "index";
-		var parts = url.split("/");
-		var parameters = parts.splice(1, parts.length-1);
-		return new templo.Loader(parts[0]+".html").execute(getPageParameters(parts[0], parameters));
-	}
-
-	private function getPageParameters(url : String, parameters : Array<String>) : Dynamic
-	{
-		switch(url)
-		{
-			case "users" : 
-				if(parameters.length == 0)
-					return {currentUsers : User.manager.search($type != User.OLD), oldUsers : User.manager.search($type == User.OLD), user : user};
-				else
-					return {selectedUser : User.manager.get(Std.parseInt(parameters[0])), user : user};
-			
-			case "teams" : 
-				if(parameters.length == 0)
-					return {groups : Group.manager.search($status == Group.VALID && $type == Group.TEAM), user : user};
-				else
+		var filename : String = "";
+		var fieldname : String = "";
+		var file : sys.io.FileOutput = null;
+		var upload = false;
+		var currentFileName : String = null;
+		Web.parseMultipart
+		(
+			function(pn:String, fn:String)
+			{
+				fieldname = pn;
+				filename = fn;
+			},
+			function (d:haxe.io.Bytes, pos:Int, len:Int)
+			{
+				if (fieldname == "file")
 				{
-					var groupId = Std.parseInt(parameters[0]);
-					var group = Group.manager.select($id == groupId && $type == Group.TEAM);
-					group.users = Lambda.array(GroupUser.manager.search($gid == groupId));
-					group.isUserIn = false;
-					group.isUserAdmin = false;
-					for(groupUser in group.users)
+					if (currentFileName != filename)
 					{
-						if(groupUser.user == user)
-						{
-							group.isUserIn = true;
-							group.isUserAdmin = groupUser.admin;
-						}
+						currentFileName = filename;
+						sys.FileSystem.createDirectory("files/"+api.getCurrentUser().id);
+						file = sys.io.File.write("files/"+api.getCurrentUser().id+"/"+filename, true);
+						file.write(d);
+						upload = true;
 					}
-					return {group : group, user : user};
+					else
+						file.write(d);
 				}
+			}
+		);
 
-			case "events" : 
-				if(parameters.length == 0)
-					return {groups : Group.manager.search($status == Group.VALID && $type == Group.EVENT), user : user};
-				else
-				{
-					var groupId = Std.parseInt(parameters[0]);
-					var group = Group.manager.select($id == groupId && $type == Group.EVENT);
-					group.users = Lambda.array(GroupUser.manager.search($gid == groupId));
-					group.isUserIn = false;
-					group.isUserAdmin = false;
-					for(groupUser in group.users)
-					{
-						if(groupUser.user == user)
-						{
-							group.isUserIn = true;
-							group.isUserAdmin = groupUser.admin;
-						}
-					}
-					return {group : group, user : user};
-				}
-
-			case "projects" : 
-				if(parameters.length == 0)
-					return {groups : Group.manager.search($status == Group.VALID && $type == Group.PROJECT), user : user};
-				else
-				{
-					var groupId = Std.parseInt(parameters[0]);
-					var group = Group.manager.select($id == groupId && $type == Group.PROJECT);
-					group.users = Lambda.array(GroupUser.manager.search($gid == groupId));
-					group.isUserIn = false;
-					group.isUserAdmin = false;
-					for(groupUser in group.users)
-					{
-						if(groupUser.user == user)
-						{
-							group.isUserIn = true;
-							group.isUserAdmin = groupUser.admin;
-						}
-					}
-					return {group : group, user : user};
-				}
-					
-			case "messages" : return {formData : {recipients : "all", selectedUser : 1, title : "", content : "", format : true, global : true}, users : User.manager.search($type != User.OLD), user : user};
-		
-			case "votes" :
-				var groups = Group.manager.search($status == Group.INVOTE);
-				for(group in groups)
-				{
-					group.userVote = 0;
-					group.upVotes = 0;
-					group.neutralVotes = 0;
-					group.downVotes = 0;
-					var votes = Vote.manager.search($group == group);
-					for(vote in votes)
-					{
-						if(vote.user == user)
-							group.userVote = vote.value;
-						if(vote.value == 1)
-							group.upVotes++;
-						else if(vote.value == 0)
-							group.neutralVotes++;
-						else if(vote.value == -1)
-							group.downVotes++;
-					}
-					group.votesValue = group.upVotes - group.downVotes;
-				}
-				return {users : User.manager.search($type != User.OLD), groups : groups, user : user};
-		}
-		return {user : user}
+		Sys.print("files/"+api.getCurrentUser().id+"/"+filename);
 	}
 }

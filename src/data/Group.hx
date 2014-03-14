@@ -30,6 +30,7 @@ class Group extends sys.db.Object
 		status = INVOTE;
 		name = "";
 		description = "";
+		picture = "";
 		date = null;
 	}
 
@@ -45,6 +46,7 @@ class Group extends sys.db.Object
 			name : this.name,
 			description : this.description,
 			date : this.date,
+			picture : this.picture,
 		}
 	}
 
@@ -57,6 +59,10 @@ class Group extends sys.db.Object
 		return "project";
 	}
 
+	public function getPictureOrDefault(defaultValue : String)
+	{
+		return picture == "" ? defaultValue : picture;
+	}
 
 	public var id : SId;
 	public var created : Date;
@@ -67,6 +73,7 @@ class Group extends sys.db.Object
 	public var name : String;
 	public var description : String;
 	public var date : Null<Date>;
+	public var picture : String;
 
 	@:skip public var userVote = 0;
 	@:skip public var upVotes = 0;

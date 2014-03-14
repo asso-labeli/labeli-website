@@ -2,25 +2,30 @@
 <html>
 	<head>
 		<title>Label[i]</title>
-		<link rel="stylesheet/less" href="/static/style.less" type="text/css">
+		<link rel="stylesheet/less" href="/www/style/style.less" type="text/css" />
 		<script src="//code.jquery.com/jquery-1.10.2.min.js" type="text/javascript"></script>
-		<script src="/static/less.js" type="text/javascript"></script>
-		<script src="/static/client.js" type="text/javascript"></script>
+		<script src="/www/scripts/less.js" type="text/javascript"></script>
+		<script src="/www/scripts/main.js" type="text/javascript"></script>
 		<meta charset="utf-8" />
 	</head>
 	<body>
 		<header>
 			<div class="content">
-				<img src="/static/images/loading.png" alt="loading..." class="loading" id="loading" />
-				<a href="index"><img src="/static/images/logo.png" alt="Label[i]" /></a>
+				<img src="/www/images/loading.png" alt="loading..." class="loading" id="loading" />
+				<a href="index"><img src="/www/images/logo.png" alt="Label[i]" /></a>
 				<nav>
 					<a href="presentation">L'association</a>
 					<a href="users">Membres</a>
 					<a href="projects">Projets</a>
 					<a href="teams">Équipes</a>
 					<a href="events">Évènements</a>
-					<a href="login" id="loginLink">Connexion</a>
-					<div id="navUser" style="background-image : url('/static/images/avatar-33x33.png'); display : none;">Username ↓</div>
+					<a href="login" id="loginLink" ::attr style if(currentUser.logged) "display : none;"::>Connexion</a>
+					::if currentUser.logged::
+						::set displayNavUser = "display : inline-block;"::
+					::else::
+						::set displayNavUser = "display : none;"::
+					::end::
+					<div id="navUser" style="background-image : url('/www/images/::currentUser.picture::');" >::currentUser.firstName:: ↓</div>
 					<div class="additionalLinks">
 						<div>
 							<a href="user">Mon Profil</a><br />
@@ -35,6 +40,7 @@
 		</header>
 		<div id="main">
 			<div id="content">
+				::raw content::
 			</div>
 			<div id="errors">
 			</div>

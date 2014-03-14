@@ -62,6 +62,11 @@ class User extends sys.db.Object
 		return password;
 	}
 
+	public function getPictureOrDefault(defaultValue : String)
+	{
+		return picture == "" ? defaultValue : picture;
+	}
+	
 	public var id : SId;
 	public var created : Date;
 	@:relation(uid) public var author : Null<User>;

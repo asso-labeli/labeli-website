@@ -5,7 +5,7 @@
 ::end::
 
 ::foreach group groups::
-	<div class="group vote large" style="background : url('/static/images/background.png') repeat;">
+	<div class="group vote large" style="background : url('/www/::group.getPictureOrDefault("images/background.png")::') repeat;">
 		<div class="info">
 			<div class="infos">
 				<a href="::group.getTypeString()::s/::group.id::"><div class="title">::group.name::</div></a>
@@ -35,7 +35,7 @@
 	</div>
 ::end::
 
-::if user.logged && user.isAdmin()::
+::if currentUser.logged && currentUser.isAdmin()::
 	<section>
 		<h1>Ajouter un vote</h1>
 		<form action="#" method="POST" id="createGroup-form" class="inline">

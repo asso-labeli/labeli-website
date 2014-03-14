@@ -1,6 +1,6 @@
 ::if group::
 
-	<section class="group" style="background-image : url('/static/images/background.png');">
+	<section class="group" style="background-image : url('/www/::group.getPictureOrDefault("images/background.png")::');">
 		<h1>::group.name::</h1>
 		<div class="description">::raw group.description::</div>
 	</section>
@@ -55,7 +55,7 @@
 		</section>
 	::end::
 	::foreach group groups::
-		<a href="projects/::group.id::" class="group" style="background : url('/static/images/background.png') repeat;">
+		<a href="projects/::group.id::" class="group" style="background : url('/www/::group.getPictureOrDefault("images/background.png")::') repeat;">
 			<div class="info">
 				<div class="title">::group.name::</div>
 				<div class="status">En cours</div>

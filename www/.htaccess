@@ -1,6 +1,6 @@
 RewriteEngine on
-RewriteBase /client
-RewriteRule .* index.html [L,QSA]
+RewriteBase /www
+RewriteRule .* index.php [L,QSA]
 
 ErrorDocument 401 /error/401
 ErrorDocument 403 /error/403

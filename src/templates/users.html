@@ -1,17 +1,49 @@
-::if selectedUser::
+::if user::
+	<section class="user" style="background-image : url(/www/::user.getPictureOrDefault("images/avatar.png")::);">
+		<div class="infos">
+			<h1>::user.firstName:: ::user.lastName::</h1>
+			<div class="created">
+				<div class="label">Membre depuis</div>
+				<div class="value">::user.created::</div>
+			</div>
+			<div class="role">
+				<div class="label">Rôle</div>
+				<div class="value">cjizo::user.role::</div>
+			</div>
+			<div class="universityGroup">
+				<div class="label">Groupe universitaire</div>
+				<div class="value">::user.universityGroup::</div>
+			</div>
+			<div class="birthday">
+				<div class="label">Anniversaire</div>
+				<div class="value">
+					::if user.birthday != null::
+						::user.birthday::
+					::end::
+				</div>
+			</div>
+		</div>
 
-	::selectedUser.firstName::
+		<h2>Biographie</h2>
+		<div class="description">::user.description::</div>
+	</section>
 
-
+	<section>
+		::if currentUser == user::
+			<div class="button" id="editUser">Éditer mon profil</div>
+		::else::
+			<a href="/www/messages?user=::user.id::" class="button">Contacter ce membre</a>
+		::end::
+	</section>
 ::else::
 
-	::foreach oneUser currentUsers::
-		<a class="user" href="users/::user.id::" style="background-image : url('/static/images/avatar.png');">::oneUser.firstName::<br />::oneUser.lastName::<br /> <span class="role">::oneUser.role::</span> </a>
+	::foreach user users::
+		<a class="user" href="users/::user.id::" style="background-image : url('/www/images/avatar.png');">::user.firstName::<br />::user.lastName::<br /> <span class="role">::user.role::</span> </a>
 	::end::
 
 	<h1>Anciens membres</h1>
-	::foreach oneUser oldUsers::
-		<a class="user old" href="users/::user.id::">::oneUser.firstName:: ::oneUser.lastName::<br /></a>
+	::foreach user oldUsers::
+		<a class="user old" href="users/::user.id::">::user.firstName:: ::user.lastName::<br /></a>
 	::end::
 
 	::if user.logged && user.isAdmin()::

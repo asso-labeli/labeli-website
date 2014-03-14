@@ -15,7 +15,7 @@
 
 *[contenteditable="true"]
 {
-	border : 1px dotted #888;
+	border : 1px dashed #888;
 }
 
 body
@@ -134,9 +134,9 @@ header
 
 		img.loading
 		{
+			display : hidden;
 			max-width : 30px;
 			max-height : 30px;
-			display: inline-block;
 			position : relative;
 			margin-right : 5px;
 			vertical-align: middle;
@@ -148,6 +148,7 @@ header
 			animation-duration: 0.33s;
 			animation-iteration-count: infinite;
 			transition-timing-function: linear;
+			opacity : 0;
 			.flex0;
 		}
 		#home-link
@@ -329,7 +330,7 @@ div.group, a.group
 	vertical-align: middle;
 }
 
-.user
+div.user, a.user
 {
 	display: inline-block;
 	background : #FFF;
@@ -367,6 +368,58 @@ div.group, a.group
 	}
 }
 
+section.user
+{
+	background-repeat : no-repeat;
+	background-size : 300px;
+	position : relative;
+
+	input.userPicture
+	{
+		width: 300px;
+		height: 300px;
+		position: absolute;
+		top: 0px;
+		margin: 0px;
+		border: none;
+		left: 0px;
+		background-color: rgba(255,255,255,0.5);
+	}
+	
+	h1
+	{
+		margin : 32px 0px;
+		font-size : 2em;
+	}
+
+	.infos
+	{
+		padding-left : 300px;
+		text-align : center;
+	}
+
+	.birthday, .role, .universityGroup, .created
+	{
+		font-size : 1.2em;
+		border-bottom : 1px solid #EEE;
+		margin-top : 15px;
+		padding-bottom : 10px;
+	}
+	.label
+	{
+		display: inline-block;
+		width : 49%;
+		text-align : right;
+		color : #666;
+	}
+	.value
+	{
+		display: inline-block;
+		width : 49%;
+		text-align : left;
+	}
+}
+
 #navUser
 {
 	background-repeat: no-repeat;
@@ -392,6 +445,7 @@ div.group, a.group
 section.group
 {
 	padding-top : 130px;
+	position : relative;
 }
 
 .groupInfos
@@ -444,5 +498,16 @@ section.group
 			border-radius: 3px;
 		}
 	}
+}
 
+input.groupPicture
+{
+	width: 974px;
+	position: absolute;
+	top: 0px;
+	height: 114px;
+	margin: 0px;
+	left: 0px;
+	border: none;
+	background-color: rgba(255,255,255,0.5);
 }

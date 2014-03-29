@@ -72,7 +72,7 @@ class User extends sys.db.Object
 
 	public static function encodePassword(password : String) : String
 	{
-		var config = haxe.Json.parse(File.getContent("config.json"));
+		var config = haxe.Json.parse(sys.io.File.getContent("config.json"));
 		return haxe.crypto.Md5.encode(config.saltStart+password+config.saltEnd);
 	}
 	

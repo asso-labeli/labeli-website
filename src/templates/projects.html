@@ -1,37 +1,60 @@
 ::if group::
-	<section class="group" style="background-image : url('/www/::group.getPictureOrDefault("images/background.png")::');">
+	<section class="group" style="background-image : url('/::tools.getPictureOrDefault(group, "images/background.png")::');">
 		<h1>::group.name::</h1>
 		<div class="description">::raw group.description::</div>
+		<div id="widgets"></div>
 	</section>
 
 	<section class="center">
 		::if group.isUserIn::
 			::if group.isUserAdmin::
-				Vous êtes administrateur de ce projet ! <a class="button" id="editGroupLink">Éditer le projet</a>
+				Vous êtes administrateur de ce projet<a class="button" id="editGroupLink">Éditer le projet</a>
 			::else::
-				Vous participez à ce projet ! <a class="button" id="leaveGroupLink">Me retirer de ce projet</a>
+				Vous participez à ce projet<a class="button" id="leaveGroupLink">Me retirer de ce projet</a>
 			::end::
 		::else::
-			Vous ne participez pas à ce projet ! <a class="button" id="joinGroupLink">Participer à ce projet</a>
+			Vous ne participez pas à ce projet<a class="button" id="joinGroupLink">Participer à ce projet</a>
 		::end::
 	</section>
+	
+	::if tools.isAdmin(currentUser)::
+		<section>
+			Administration du projet
+			::if group.status == 0::
+				<a class="button" id="validateGroupLink">Valider ce projet</a>
+			::else::
+				<a class="button" id="unvalidateGroupLink">Revoter ce projet</a>
+			::end::
+			<a class="button" id="deleteGroupLink">Supprimer ce projet</a>
+		</section>
+	::end::
 
 	<div class="groupInfos">
 		<div class="members">
 			<h2>Participants</h2>
 			<br />
 			::foreach groupUser group.users::
-				<a class="user" href="users/::groupUser._user.id::" style="background-image : url('::groupUser._user.picture::.png');">
-					::groupUser._user.firstName::<br />
-					::groupUser._user.lastName::<br />
+				<a class="user" href="/users/::groupUser.user.id::" style="background-image : url('/::tools.getPictureOrDefault(groupUser.user, "images/avatar.png")::');">
+					::groupUser.user.firstName::<br />
+					::groupUser.user.lastName::<br />
 					<span class="role">::groupUser.label::</span>
 				</a>
 				<br />
 			::end::
+<!-- 			<div class="user add">
+	<select name="newUser" id="newUserId">
+		::foreach author users::
+			<option value="::author.id::">::author.firstName:: ::author.lastName::</option>
+		::end::
+	</select>
+
+	<input type="text" id="newUserLabel" placeholder="Rôle" />
+	<a class="button addUserToGroup" type="text">Ajouter</a>
+</div> -->
 		</div>
 		<div class="messages">
 			<h2>Messages</h2>
-			<div class="chatBox" href="::group.getTypeString()::/::group.id::">
+			<div class="chatBox" href="/::tools.getTypeString(group)::/::group.id::">
 				<div class="messages">
 				</div>
 				::if currentUser.logged::
@@ -52,11 +75,11 @@
 		</section>
 	::end::
 	::foreach group groups::
-		<a href="projects/::group.id::" class="group" style="background : url('/www/::group.getPictureOrDefault("images/background.png")::') repeat;">
+		<a href="/projects/::group.id::" class="group" style="background : url('/::tools.getPictureOrDefault(group, "images/background.png")::') repeat;">
 			<div class="info">
 				<div class="title">::group.name::</div>
 				<div class="status">En cours</div>
-				<div class="author">par ::group._author.firstName:: ::group._author.lastName::</div>
+				<div class="author">par ::group.author.firstName:: ::group.author.lastName::</div>
 			</div>
 		</a>
 	::end::

@@ -1,14 +1,14 @@
 ::if user::
-	<section class="user" style="background-image : url(/www/::user.getPictureOrDefault("images/avatar.png")::);">
+	<section class="user" style="background-image : url(/::tools.getPictureOrDefault(user, "images/avatar.png")::);">
 		<div class="infos">
 			<h1>::user.firstName:: ::user.lastName::</h1>
 			<div class="created">
-				<div class="label">Membre depuis</div>
-				<div class="value">::user.created::</div>
+				<div class="label">Membre depuis le</div>
+				<div class="value">::tools.formatTimestamp(user.created, "%e/%m/%Y")::</div>
 			</div>
 			<div class="role">
 				<div class="label">Rôle</div>
-				<div class="value">cjizo::user.role::</div>
+				<div class="value">::user.role::</div>
 			</div>
 			<div class="universityGroup">
 				<div class="label">Groupe universitaire</div>
@@ -18,35 +18,42 @@
 				<div class="label">Anniversaire</div>
 				<div class="value">
 					::if user.birthday != null::
-						::user.birthday::
+						::tools.formatTimestamp(user.birthday, "%e/%m/%Y")::
 					::end::
 				</div>
 			</div>
 		</div>
 
 		<h2>Biographie</h2>
-		<div class="description">::user.description::</div>
+		<div class="description">::raw user.description::</div>
 	</section>
 
 	<section>
-		::if currentUser == user::
+		::if currentUser.id == user.id::
 			<div class="button" id="editUser">Éditer mon profil</div>
 		::else::
-			<a href="/www/messages?user=::user.id::" class="button">Contacter ce membre</a>
+			<a href="/messages?user=::user.id::" class="button">Contacter ce membre</a>
 		::end::
 	</section>
+
+	::if tools.isAdmin(currentUser) && currentUser.id != user.id::
+		<section>
+			Administration du membre
+			<div class="button" id="editUser">Éditer le profil</div>
+		</section>
+	::end::
 ::else::
 
 	::foreach user users::
-		<a class="user" href="users/::user.id::" style="background-image : url('/www/images/avatar.png');">::user.firstName::<br />::user.lastName::<br /> <span class="role">::user.role::</span> </a>
+		<a class="user" href="/users/::user.id::" style="background-image : url('::tools.getPictureOrDefault(user, "images/avatar.png")::');">::user.firstName::<br />::user.lastName::<br /> <span class="role">::user.role::</span> </a>
 	::end::
 
 	<h1>Anciens membres</h1>
 	::foreach user oldUsers::
-		<a class="user old" href="users/::user.id::">::user.firstName:: ::user.lastName::<br /></a>
+		<a class="user old" href="/users/::user.id::">::user.firstName:: ::user.lastName::<br /></a>
 	::end::
 
-	::if user.logged && user.isAdmin()::
+	::if currentUser.logged && tools.isAdmin(currentUser)::
 		<section>
 			<h1>Ajouter un membre</h1>
 			<form action="#" method="POST" id="createUser-form" class="inline">
@@ -57,5 +64,4 @@
 			</form>
 		</section>
 	::end::
-
 ::end::

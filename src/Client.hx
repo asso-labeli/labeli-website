@@ -5,8 +5,9 @@ using DateTools;
 
 class Client
 {
-	private var subdomain = "/www/";
+	private var subdomain = "/";
 	private var context : haxe.remoting.HttpAsyncConnection;
+	private var syncContext : haxe.remoting.HttpConnection;
 
 	private var anchorsInHistory = 1;
 	private var user : Dynamic;
@@ -20,30 +21,39 @@ class Client
 	{
 		new JQuery(function()
 		{
-			context = haxe.remoting.HttpAsyncConnection.urlConnect("http://localhost/api/index.php");
+			context = haxe.remoting.HttpAsyncConnection.urlConnect("/api");
 			context.setErrorHandler(onError);
+			syncContext = haxe.remoting.HttpConnection.urlConnect("/api");
 			
-			if(js.Browser.getSessionStorage().getItem("user") != null)
-			{
-				user = haxe.Json.parse(js.Browser.getSessionStorage().getItem("user"));
-				switchToUserInterface();
-			}
-
-			js.Browser.window.onpopstate = function(event)
-			{
-				if(anchorsInHistory > 0)
-					anchorsInHistory--;
-				else
-					loadURL(js.Browser.location.pathname.substring(subdomain.length));
-			};
-
+			autoLogin();
+			initHistory();
 			makeLinks();
 		});
 	}
 
 	public function onError(exception : Dynamic)
 	{
-		new JQuery("#errors").append(exception);
+		trace(exception);
+	}
+
+	public function autoLogin()
+	{
+		user = syncContext.api.getCurrentUser.call([]);
+		if(user.id != null)
+		{
+			switchToUserInterface();
+		}
+	}
+
+	public function initHistory()
+	{
+		js.Browser.window.onpopstate = function(event)
+		{
+			if(anchorsInHistory > 0)
+				anchorsInHistory--;
+			else
+				loadURL(js.Browser.location.pathname);
+		};
 	}
 
 	public function makeLinks()
@@ -63,9 +73,13 @@ class Client
 		new JQuery("#leaveGroupLink").off("click").on("click", leaveGroupCallback);
 		new JQuery("#joinGroupLink").off("click").on("click", joinGroupCallback);
 		new JQuery("#editGroupLink").off("click").on("click", editGroupCallback);
+		new JQuery("#addUserToGroup").off("click").on("click", addUserToGroupCallback);
+		new JQuery("#validateGroupLink").off("click").on("click", validateGroupCallback);
+		new JQuery("#unvalidateGroupLink").off("click").on("click", unvalidateGroupCallback);
+		new JQuery("#deleteGroupLink").off("click").on("click", deleteGroupCallback);
 
 		new JQuery("#editUser").off("click").on("click", editUserCallback);
-/*
+
 		var chatBox = new JQuery(".chatBox");
 		var messageTime = 0;
 		if(chatBox.length > 0)
@@ -84,7 +98,7 @@ class Client
 						for(message in result)
 						{
 							chatBox.find(".messages").append("<div class=\"chatMessage\">
-							<div class=\"author\" style=\"background : url('"+message.author.picture+"-33x33.png') no-repeat;\">"+message.author.firstName+" "+message.author.lastName+" le "+Date.fromTime(message.created).format("%e/%m/%C à %R")+"</div>
+							<div class=\"author\" style=\"background : url('/"+message.author.picture+"') no-repeat; background-size : 33px 33px;\">"+message.author.firstName+" "+message.author.lastName+" le "+Date.fromTime(message.created).format("%e/%m/%C à %R")+"</div>
 							<div class=\"content\">"+message.content+"</div>
 						</div>");
 							messageTime = message.created;
@@ -94,8 +108,7 @@ class Client
 					}
 				});
 			}
-			//js.Browser.window.setInterval(refresh, 1000);
-
+			js.Browser.window.setInterval(refresh, 1000);
 
 			chatBox.find("form").off("submit").on("submit", function(event : Event)
 			{
@@ -106,22 +119,64 @@ class Client
 				});
 			});
 		}
-		*/
-/*
-		<div class="chatBox" href="::group.getTypeString()::/::group.id::">
-				<div class="messages">
-					<!-- <div class="chatMessage">
-						<div class="author" style="background : url('::user.picture::-33x33.png') no-repeat;">Alix le 31/12/9999</div>
-						<div class="content">Lorem ipsum dolor sit amet, consectetur adipisicing elit. Aperiam, dolorem optio consectetur expedita</div>
-					</div>-->
-				</div>
-				::if user.logged::
-					<form class="inline sendMessage">
-						<input type="text" placeholder="Envoyer un message" />
-						<input type="submit" value="Envoyer" />
-					</form>
-				::end::
-			</div>*/
+
+
+		var surveys = new JQuery(".survey");
+		if(surveys.length > 0)
+		{
+			function loadSurveyData(survey : JQuery)
+			{
+				var surveyName = survey.attr("name");
+				context.api.getSurveyData.call([surveyName], function(result : Dynamic)
+				{
+					trace(result);
+					survey.find("label").each(function(i2 : Int, element2 : js.html.Node)
+					{
+						var label = new JQuery(element2);
+						var name = label.attr("for").substring("surveyItem-".length);
+						var index = Lambda.indexOf(result.itemsName, name);
+
+						label.next().attr("value", Std.string(result.itemsVotes[index] == null ? 0 : result.itemsVotes[index]));
+						label.next().attr("max", Std.string(result.totalVotes));
+						if(result.userVotes[index])
+							label.prev().attr("checked", "true");
+					});
+
+				});
+
+				survey.find("label").each(function(i2 : Int, element2 : js.html.Node)
+				{
+					var label = new JQuery(element2);
+					label.prev().off("click").on("click", function(event : Event)
+					{
+						var checked = label.prev().is(':checked');
+						context.api.voteForSurvey.call([surveyName, label.attr("for").substring("surveyItem-".length), checked], function(result : Bool)
+						{
+							label.prev().attr("checked", Std.string(checked));
+							label.next().attr("value", Std.parseInt(label.next().attr("value")) + (if(checked) 1 else -1));
+							if(Std.parseInt(label.next().attr("value")) > Std.parseInt(label.next().attr("max")))
+							{
+								label.parent().find("progress").attr("max", Std.parseInt(label.next().attr("max"))+1);
+							}
+						});
+					});
+				});
+			}
+
+			var widgets = new JQuery("#widgets");
+
+			surveys.each(function(i : Int, element : js.html.Node)
+			{
+				widgets.append("<div class=\"surveyWidget\" name=\""+new JQuery(element).attr("name")+"\"></div>");
+				var surveyHTML = new JQuery(widgets[0].lastChild);
+				new JQuery(element).find("label").each(function(i2 : Int, element2 : js.html.Node)
+				{
+					var voteName = new JQuery(element2).html();
+					surveyHTML.append("<div class=\"vote\"><input id=\"surveyItem-"+voteName+"\" type=\"checkbox\" name=\""+voteName+"\"/><label for=\"surveyItem-"+voteName+"\">"+voteName+"</label><progress value=\"5\" max=\"15\"></progress></div>");
+				});
+				loadSurveyData(surveyHTML);
+			});
+		}
 	}
 
 	public function linkCallback(event : Event)
@@ -145,14 +200,13 @@ class Client
 		var usernameInput : js.html.InputElement = cast (new JQuery(form).find("input[type=\"text\"]")[0]);
 		var passwordInput : js.html.InputElement = cast (new JQuery(form).find("input[type=\"password\"]")[0]);
 		
-		context.api.login.call([usernameInput.value, passwordInput.value], function(result : Dynamic)
+		context.api.login.call([usernameInput.value, passwordInput.value], function(loggedUser : Dynamic)
 		{
-			if(result != null)
+			user = loggedUser;
+			if(user != null && user.id != null)
 			{
-				user = result;
-				js.Browser.getSessionStorage().setItem("user", haxe.Json.stringify(user));
 				switchToUserInterface();
-				loadURL("");
+				loadURL("/index");
 			}
 			else
 				new JQuery("form").after("<div class=\"message error\">Les identifiants sont incorrects.</div>").next().delay(3000).fadeOut(250);
@@ -163,8 +217,8 @@ class Client
 	{
 		new JQuery("#navUser").show();
 		new JQuery("#navUser").html(user.firstName+" ↓");
-		new JQuery(".additionalLinks a:first-child").attr("href", "users/"+user.id);
-		new JQuery("#navUser").css("background-image", "url('"+user.picture+"-33x33.png')");
+		new JQuery(".additionalLinks a:first-child").attr("href", "/users/"+user.id);
+		new JQuery("#navUser").css("background-image", "url('/"+user.picture+"')");
 		new JQuery("#loginLink").hide();
 	}
 
@@ -172,17 +226,13 @@ class Client
 	{
 		event.preventDefault();
 		
-		context.api.logout.call([], function(result : Bool)
+		if(syncContext.api.logout.call([]))
 		{
-			if(result)
-			{
-				loadURL("");
-				js.Browser.getSessionStorage().removeItem("user");
-				new JQuery("#loginLink").show();
-				new JQuery("#navUser").hide();
-				new JQuery("#navUser").next().hide();
-			}
-		});
+			loadURL("/index");
+			new JQuery("#loginLink").show();
+			new JQuery("#navUser").hide();
+			new JQuery("#navUser").next().hide();
+		}
 	}
 
 	public function createUserCallback(event : Event)
@@ -260,7 +310,7 @@ class Client
 
 	public function leaveGroupCallback(event : Event)
 	{
-		context.api.leaveGroup.call([Std.parseInt(js.Browser.document.location.pathname.split("/")[3])], function(result : Bool)
+		context.api.leaveGroup.call([Std.parseInt(js.Browser.document.location.pathname.split("/")[2])], function(result : Bool)
 		{
 			if(result)
 				reloadURL();
@@ -269,7 +319,7 @@ class Client
 
 	public function joinGroupCallback(event : Event)
 	{
-		context.api.joinGroup.call([Std.parseInt(js.Browser.document.location.pathname.split("/")[3])], function(result : Bool)
+		context.api.joinGroup.call([Std.parseInt(js.Browser.document.location.pathname.split("/")[2])], function(result : Bool)
 		{
 			if(result)
 				reloadURL();
@@ -288,11 +338,10 @@ class Client
 					new JQuery("#resetChanges").remove();
 					new JQuery("#editGroupLink").show();
 					new JQuery("section.group").find("h1").attr("contenteditable", "false").css("min-height", "initial");
-					new JQuery("section.group").find(".description").attr("contenteditable", "false").css("min-height", "initial");
-					new JQuery("section.group").find(".description").html(new JQuery("section.group").find(".description").html().htmlUnescape());
+					new JQuery("section.group").find(".description").replaceWith("<div class=\"description\">"+description+"</div>");
 					new JQuery("#uploadImage").remove();
 					if(picture != null)
-						new JQuery(".group").css("background-image", "url(/www/"+picture+")");
+						new JQuery(".group").css("background-image", "url(/"+picture+")");
 				}
 			});
 		}
@@ -301,17 +350,17 @@ class Client
 		{
 			return function(event : js.html.Event)
 			{
-				var input : js.html.InputElement = cast new JQuery("section.group").find("input")[0];
+				var input : js.html.InputElement = cast new JQuery("section.group").find("input[type=file]")[0];
 				if(input.files.length == 1)
 				{
 					uploadFile(input, function(result : JqXHR)
 					{
-						editGroup(groupId, new JQuery("section.group").find("h1").html(), new JQuery("section.group").find(".description").html().htmlUnescape(), result.responseText);
+						editGroup(groupId, new JQuery("section.group").find("h1").html(), new JQuery("section.group").find(".description").val(), result.responseText);
 					});	
 				}
 				else
 				{
-					editGroup(groupId, new JQuery("section.group").find("h1").html(), new JQuery("section.group").find(".description").html().htmlUnescape(), null);
+					editGroup(groupId, new JQuery("section.group").find("h1").html(), new JQuery("section.group").find(".description").val(), null);
 				}
 			}
 		}
@@ -325,28 +374,27 @@ class Client
 				new JQuery("#editGroupLink").show();
 
 				new JQuery("section.group").find("h1").html(title);
-				new JQuery("section.group").find(".description").html(description.htmlUnescape());
-
 				new JQuery("section.group").find("h1").attr("contenteditable", "false").css("min-height", "initial");
-				new JQuery("section.group").find(".description").attr("contenteditable", "false").css("min-height", "initial");
+
+				new JQuery("section.group").find(".description").replaceWith("<div class=\"description\">"+description+"</div>");
+
 				new JQuery("#uploadImage").remove();
 			}
 		}
 
 		// Retrieve group id
-		var groupId = Std.parseInt(js.Browser.document.location.pathname.split("/")[3]);
+		var groupId = Std.parseInt(js.Browser.document.location.pathname.split("/")[2]);
 		
 		// Set title and description to be editable and add a form to upload picture
 		new JQuery("section.group").find("h1").css("min-height", ""+(new JQuery("section.group").find("h1").height()-2)+"px");
 		new JQuery("section.group").find("h1").attr("contenteditable", "true");
-		new JQuery("section.group").find(".description").css("min-height", ""+(new JQuery("section.group").find(".description").height()-2)+"px");
-		new JQuery("section.group").find(".description").attr("contenteditable", "true");
-		new JQuery("section.group").find(".description").html(new JQuery("section.group").find(".description").html().htmlEscape());
-		new JQuery("section.group").append("<form id=\"uploadImage\" enctype=\"multipart/form-data\"><input type=\"file\" class=\"groupPicture\" /></form>");
+		new JQuery("section.group").find(".description").replaceWith("<textarea class=\"description\">"+new JQuery("section.group").find(".description").html()+"</textarea>");
+/*		new JQuery("section.group").find(".description").css("min-height", ""+(new JQuery("section.group").find(".description").height()-2)+"px");
+*/		new JQuery("section.group").append("<form id=\"uploadImage\" enctype=\"multipart/form-data\"><input type=\"file\" class=\"groupPicture\" /></form>");
 
 		// Backup values
 		var title = new JQuery("section.group").find("h1").html();
-		var description = new JQuery("section.group").find(".description").html();
+		var description = new JQuery("section.group").find(".description").val();
 
 		// Hide edit button and show submit and cancel buttons
 		new JQuery(event.target).hide();
@@ -356,8 +404,60 @@ class Client
 		new JQuery("#resetChanges").on("click", resetChanges(title, description));
 	}
 
+	public function addUserToGroupCallback(event : Event)
+	{
+		event.preventDefault();
+		var groupId = Std.parseInt(js.Browser.document.location.pathname.split("/")[2]);
+		context.api.addUserToGroup.call([groupId, new JQuery("#newUserId").val(), new JQuery("#newUserLabel").val()], function(result : Bool)
+		{
+			if(result)
+			{
+				trace("ok");
+			}
+		});
+	}
+
+	public function validateGroupCallback(event : Event)
+	{
+		// Retrieve group id
+		var groupId = Std.parseInt(js.Browser.document.location.pathname.split("/")[2]);
+
+		context.api.validateGroup.call([groupId], function(result : Bool)
+		{
+			if(result)
+			{
+				new JQuery("#validateGroupLink").replaceWith("<a class=\"button\" id=\"unvalidateGroupLink\">Revoter ce projet</a>");
+				new JQuery("#unvalidateGroupLink").off("click").on("click", unvalidateGroupCallback);
+			}
+		});
+	}
+
+	public function unvalidateGroupCallback(event : Event)
+	{
+		// Retrieve group id
+		var groupId = Std.parseInt(js.Browser.document.location.pathname.split("/")[2]);
+
+		context.api.unvalidateGroup.call([groupId], function(result : Bool)
+		{
+			if(result)
+			{
+				new JQuery("#unvalidateGroupLink").replaceWith("<a class=\"button\" id=\"validateGroupLink\">Valider ce projet</a>");
+				new JQuery("#validateGroupLink").off("click").on("click", validateGroupCallback);
+			}
+		});
+	}
+
+	public function deleteGroupCallback(event : Event)
+	{
+		// Retrieve group id
+		var groupId = Std.parseInt(js.Browser.document.location.pathname.split("/")[1]);
+		context.api.deleteGroup.call([groupId], function(result : Bool) {});
+		loadURL(js.Browser.document.location.pathname.split("/")[1]);
+	}
+
 	public function editUserCallback(event : Event)
 	{
+		var admin = false;
 		function editUser(userId : Int, role : String, universityGroup : String, birthday : Int, description : String, picture : String)
 		{
 			context.api.editUser.call([userId, role, universityGroup, birthday, description, picture], function(result : Bool)
@@ -371,10 +471,10 @@ class Client
 					new JQuery("section.user").find(".universityGroup .value").attr("contenteditable", "false").css("min-height", "initial");
 					new JQuery("section.user").find(".role .value").attr("contenteditable", "false").css("min-height", "initial");
 					new JQuery("section.user").find(".birthday .value").attr("contenteditable", "false").css("min-height", "initial");
-					new JQuery("section.user").find(".description").html(new JQuery("section.user").find(".description").html().htmlUnescape());
+					new JQuery("section.user").find(".description").replaceWith("<div class=\"description\">"+description+"</div>");
 					new JQuery("#uploadImage").remove();
 					if(picture != null)
-						new JQuery("section.user").css("background-image", "url(/www/"+picture+")");
+						new JQuery("section.user").css("background-image", "url(/"+picture+")");
 				}
 			});
 		}
@@ -383,7 +483,12 @@ class Client
 		{
 			return function(event : js.html.Event)
 			{
-				var input : js.html.InputElement = cast new JQuery("section.user").find("input")[0];
+				var input : js.html.InputElement = cast new JQuery("section.user").find("input[type=\"file\"]")[0];
+
+				var dateValue = new JQuery("section.user").find(".birthday .value").html();
+				var dateParts = dateValue.split("/");
+				var birthdayTime : Int = cast new Date(Std.parseInt(dateParts[2]), Std.parseInt(dateParts[1])-1, Std.parseInt(dateParts[0]),1,0,0).getTime();
+
 				if(input.files.length == 1)
 				{
 					uploadFile(input, function(result : JqXHR)
@@ -392,7 +497,7 @@ class Client
 							new JQuery("section.user").find(".role .value").html(),
 							new JQuery("section.user").find(".universityGroup .value").html(),
 							Std.parseInt(new JQuery("section.user").find(".birthday .value").html()),
-							new JQuery("section.user").find(".description").html().htmlUnescape(),
+							new JQuery("section.user").find(".description").val(),
 							result.responseText);
 					});	
 				}
@@ -401,8 +506,8 @@ class Client
 					editUser(userId,
 						new JQuery("section.user").find(".role .value").html(),
 						new JQuery("section.user").find(".universityGroup .value").html(),
-						Std.parseInt(new JQuery("section.user").find(".birthday .value").html()),
-						new JQuery("section.user").find(".description").html().htmlUnescape(),
+						birthdayTime,
+						new JQuery("section.user").find(".description").val(),
 						null);
 				}
 			}
@@ -416,28 +521,32 @@ class Client
 				new JQuery("#resetChanges").remove();
 				new JQuery("#editUser").show();
 
-				new JQuery("section.user").find(".role .value").html(role).attr("contenteditable", "false").css("min-height", "initial");
+				if(admin)
+					new JQuery("section.user").find(".role .value").html(role).attr("contenteditable", "false").css("min-height", "initial");
 				new JQuery("section.user").find(".universityGroup .value").html(universityGroup).attr("contenteditable", "false").css("min-height", "initial");
 				new JQuery("section.user").find(".birthday .value").html(birthday).attr("contenteditable", "false").css("min-height", "initial");
-				new JQuery("section.user").find(".description").html(description.htmlUnescape()).attr("contenteditable", "false").css("min-height", "initial");
+				new JQuery("section.user").find(".description").replaceWith("<div class=\"description\">"+description+"</div>");
 
 				new JQuery("#uploadImage").remove();
 			}
 		}
 
 		// Retrieve user id
-		var userId = Std.parseInt(js.Browser.document.location.pathname.split("/")[3]);
+		var userId = Std.parseInt(js.Browser.document.location.pathname.split("/")[2]);
 		
 		// Set title and description to be editable and add a form to upload picture
-		new JQuery("section.user").find(".role .value").css("min-height", ""+(new JQuery("section.user").find(".role .value").height()-2)+"px");
-		new JQuery("section.user").find(".role .value").attr("contenteditable", "true");
+		if(admin)
+		{
+			new JQuery("section.user").find(".role .value").css("min-height", ""+(new JQuery("section.user").find(".role .value").height()-2)+"px");
+			new JQuery("section.user").find(".role .value").attr("contenteditable", "true");
+		}
 		new JQuery("section.user").find(".universityGroup .value").css("min-height", ""+(new JQuery("section.user").find(".universityGroup .value").height()-2)+"px");
 		new JQuery("section.user").find(".universityGroup .value").attr("contenteditable", "true");
 		new JQuery("section.user").find(".birthday .value").css("min-height", ""+(new JQuery("section.user").find(".birthday .value").height()-2)+"px");
 		new JQuery("section.user").find(".birthday .value").attr("contenteditable", "true");
-		new JQuery("section.user").find(".description").css("min-height", ""+(new JQuery("section.user").find(".description").height()-2)+"px");
-		new JQuery("section.user").find(".description").attr("contenteditable", "true");
-		new JQuery("section.user").find(".description").html(new JQuery("section.user").find(".description").html().htmlEscape());
+
+		new JQuery("section.user").find(".description").replaceWith("<textarea class=\"description\">"+new JQuery("section.user").find(".description").html()+"</textarea>");
+
 		new JQuery("section.user").append("<form id=\"uploadImage\" enctype=\"multipart/form-data\"><input type=\"file\" class=\"userPicture\" /></form>");
 
 		// Backup values
@@ -459,10 +568,10 @@ class Client
 		new JQuery("#content").hide();
 		new JQuery("#loading").animate({opacity : 1}, 250);
 
-		js.Browser.window.history.pushState({}, "Label[i]", subdomain+url);
+		js.Browser.window.history.pushState({}, "Label[i]", url);
 		JQueryStatic.ajax(
 			{
-				url : subdomain+url+"?template=false",
+				url : url+"?template=false",
 				success : function(result : String)
 				{
 					new JQuery("#loading").animate({opacity : 0}, 250);
@@ -476,7 +585,7 @@ class Client
 
 	private function reloadURL()
 	{
-		loadURL(js.Browser.document.location.pathname.substring(subdomain.length));		
+		loadURL(js.Browser.document.location.pathname);		
 	}
 
 	public function uploadFile(input : js.html.InputElement, callback : JqXHR -> Void)
@@ -485,8 +594,8 @@ class Client
 		untyped __js__("formData.append(\"file\", input.files[0]);");
 
 		JQueryStatic.ajax({
-			url: subdomain+'upload',
-			type: 'POST',
+			url: "/upload",
+			type: "POST",
 			data: formData,
 			complete : callback,
 			cache: false,

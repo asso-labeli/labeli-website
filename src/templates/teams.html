@@ -1,48 +1,68 @@
 ::if group::
-
-	<section class="group" style="background-image : url('/www/::group.getPictureOrDefault("images/background.png")::');">
+	<section class="group" style="background-image : url('/::tools.getPictureOrDefault(group, "images/background.png")::');">
 		<h1>::group.name::</h1>
 		<div class="description">::raw group.description::</div>
+		<div id="widgets"></div>
 	</section>
 
 	<section class="center">
 		::if group.isUserIn::
 			::if group.isUserAdmin::
-				Vous êtes administrateur de cette équipe ! <a class="button" id="editGroupLink">Éditer l'équipe</a>
+				Vous êtes administrateur de cette équipe<a class="button" id="editGroupLink">Éditer l'équipe</a>
 			::else::
-				Vous participez à cette équipe ! <a class="button" id="leaveGroupLink">Me retirer de cette équipe</a>
+				Vous participez à cette équipe<a class="button" id="leaveGroupLink">Me retirer de cette équipe</a>
 			::end::
 		::else::
-			Vous ne participez pas à cette équipe ! <a class="button" id="joinGroupLink">Participer à cette équipe</a>
+			Vous ne participez pas à cette équipe<a class="button" id="joinGroupLink">Participer à cette équipe</a>
 		::end::
 	</section>
+	
+	::if tools.isAdmin(currentUser)::
+		<section>
+			Administration de l'équipe
+			::if group.status == 0::
+				<a class="button" id="validateGroupLink">Valider cette équipe</a>
+			::else::
+				<a class="button" id="unvalidateGroupLink">Revoter cette équipe</a>
+			::end::
+			<a class="button" id="deleteGroupLink">Supprimer cette équipe</a>
+		</section>
+	::end::
 
 	<div class="groupInfos">
 		<div class="members">
 			<h2>Participants</h2>
 			<br />
 			::foreach groupUser group.users::
-				<a class="user" href="users/::groupUser.user.id::" style="background-image : url('::groupUser.user.picture::.png');">
+				<a class="user" href="/users/::groupUser.user.id::" style="background-image : url('/::tools.getPictureOrDefault(groupUser.user, "images/avatar.png")::');">
 					::groupUser.user.firstName::<br />
 					::groupUser.user.lastName::<br />
 					<span class="role">::groupUser.label::</span>
 				</a>
 				<br />
 			::end::
+<!-- 			<div class="user add">
+	<select name="newUser" id="newUserId">
+		::foreach author users::
+			<option value="::author.id::">::author.firstName:: ::author.lastName::</option>
+		::end::
+	</select>
+
+	<input type="text" id="newUserLabel" placeholder="Rôle" />
+	<a class="button addUserToGroup" type="text">Ajouter</a>
+</div> -->
 		</div>
 		<div class="messages">
 			<h2>Messages</h2>
-			<div class="chatBox" href="::group.getTypeString()::/::group.id::">
+			<div class="chatBox" href="/::tools.getTypeString(group)::/::group.id::">
 				<div class="messages">
-					<!-- <div class="chatMessage">
-						<div class="author" style="background : url('::user.picture::-33x33.png') no-repeat;">Alix le 31/12/9999</div>
-						<div class="content">Lorem ipsum dolor sit amet, consectetur adipisicing elit. Aperiam, dolorem optio consectetur expedita</div>
-					</div>-->
 				</div>
-				<form class="inline sendMessage">
-					<input type="text" placeholder="Envoyer un message" />
-					<input type="submit" value="Envoyer" />
-				</form>
+				::if currentUser.logged::
+					<form class="inline sendMessage">
+						<input type="text" placeholder="Envoyer un message" />
+						<input type="submit" value="Envoyer" />
+					</form>
+				::end::
 			</div>
 		</div>
 	</div>
@@ -51,15 +71,15 @@
 
 	::if groups.length == 0::
 		<section class="center">
-			Aucune équipe en ce moment. :(
+			Aucune équipe en ce moment. :(	
 		</section>
 	::end::
 	::foreach group groups::
-		<a href="projects/::group.id::" class="group" style="background : url('/www/::group.getPictureOrDefault("images/background.png")::') repeat;">
+		<a href="/teams/::group.id::" class="group" style="background : url('/::tools.getPictureOrDefault(group, "images/background.png")::') repeat;">
 			<div class="info">
 				<div class="title">::group.name::</div>
 				<div class="status">En cours</div>
-				<div class="author">par ::group._author.firstName:: ::group._author.lastName::</div>
+				<div class="author">par ::group.author.firstName:: ::group.author.lastName::</div>
 			</div>
 		</a>
 	::end::

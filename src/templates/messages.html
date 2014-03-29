@@ -3,7 +3,7 @@
 	
 	<form action="#" method="POST">
 		<label>Destinataire</label><br />
-		::if user.isAdmin()::
+		::if tools.isAdmin(user)::
 			::if formData.recipients == "all"::
 				<input type="radio" name="recipients" value="all" id="all" checked="checked" />
 			::else::
@@ -43,7 +43,7 @@
 		<label for="mailContent">Contenu</label><br />
 		<textarea name="content" id="mailContent">::formData.content::</textarea><br />
 
-		::if user.isAdmin()::
+		::if tools.isAdmin(user)::
 			<label>Options</label><br />
 			::if formData.format::
 				<input type="checkbox" name="format" id="format" checked="checked" /><label for="format">Préformatter le mail</label><br />

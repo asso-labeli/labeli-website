@@ -11,22 +11,13 @@ class Api
 	static var config : Dynamic;
 	private var user : User;
 
-	static function main()
-	{
-		// Start server
-		instance = new Api();
-		var context = new haxe.remoting.Context();
-		context.addObject("api",instance); 
-		haxe.remoting.HttpConnection.handleRequest(context);
-	}
-
 	public function new()
 	{
 		// Start php session
 		Session.start();
 
 		// Load config
-		config = haxe.Json.parse(File.getContent("../api/config.json"));
+		config = haxe.Json.parse(File.getContent("config.json"));
 
 		// Load Database
 		sys.db.Manager.cnx = sys.db.Mysql.connect(config.database);
@@ -35,6 +26,7 @@ class Api
 		if(!sys.db.TableCreate.exists(Vote.manager)) { sys.db.TableCreate.create(Vote.manager); }
 		if(!sys.db.TableCreate.exists(GroupUser.manager)) { sys.db.TableCreate.create(GroupUser.manager); }
 		if(!sys.db.TableCreate.exists(Message.manager)) { sys.db.TableCreate.create(Message.manager); }
+		if(!sys.db.TableCreate.exists(SurveyVote.manager)) { sys.db.TableCreate.create(SurveyVote.manager); }
 
 		if(Session.exists("id"))
 		{
@@ -42,7 +34,9 @@ class Api
 			user.logged = true;
 		}
 		else
+		{
 			user = new User();
+		}
 	}
 
 	/*
@@ -59,17 +53,10 @@ class Api
 		{
 			user = newUser;
 			user.logged = true;
+			Session.set("id", user.id);
 		}
 
-		Session.set("id", user.id);
-
-		return
-		{
-			firstName : user.firstName,
-			lastName : user.lastName,
-			id : user.id,
-			picture : user.picture
-		};
+		return User.toObject(newUser);
 	}
 
 	public function logout() : Bool
@@ -80,7 +67,7 @@ class Api
 
 	public function getCurrentUser()
 	{
-		return user;
+		return User.toObject(user);
 	}
 
 	public function createUser(firstName : String, lastName : String, email : String) : Bool
@@ -114,18 +101,38 @@ class Api
 		return false;
 	}
 
+	public function editUser(userId : Int, role : String, universityGroup : String, birthday : Int, description : String, picture : String) : Bool
+	{
+		var user = User.manager.get(userId);
+		if(getCurrentUser().type == User.ADMIN)
+			user.role = role;
+		user.universityGroup = universityGroup;
+		user.birthday = Date.fromTime(birthday);
+		user.description = description;
+		if(picture != null && picture != "")
+			user.picture = picture;
+
+		user.update();
+		return true;
+	}
+
 	/*
 	 * User functions
 	 */
 
 	public function getUser(userId : Int)
 	{
-		return User.manager.get(userId);
+		return User.toObject(User.manager.get(userId));
 	}
 
 	public function getUsers()
 	{
-		return User.manager.search($type != User.OLD);
+		return User.toArray(User.manager.search($type != User.OLD, {orderBy : firstName}));
+	}
+
+	public function getOldUsers()
+	{
+		return User.toArray(User.manager.search($type == User.OLD, {orderBy : firstName}));
 	}
 
 	/*
@@ -161,7 +168,8 @@ class Api
 
 	public function joinGroup(groupId : Int) : Bool
 	{
-		new GroupUser(Group.manager.get(groupId), user, "Membre", false).insert();
+		if(GroupUser.manager.select($gid == groupId && $user == user) == null)
+			new GroupUser(Group.manager.get(groupId), user, "Membre", false).insert();
 		return true;
 	}
 
@@ -175,6 +183,37 @@ class Api
 
 		group.update();
 
+		return true;
+	}
+
+	public function validateGroup(groupId : Int) : Bool
+	{
+		var group = Group.manager.get(groupId);
+		group.status = Group.VALID;
+		group.update();
+		return true;
+	}
+
+	public function unvalidateGroup(groupId : Int) : Bool
+	{
+		var group = Group.manager.get(groupId);
+		group.status = Group.INVOTE;
+		group.update();
+		return true;
+	}
+
+	public function deleteGroup(groupId : Int) : Bool
+	{
+		var group = Group.manager.get(groupId);
+		group.delete();
+		return true;
+	}
+
+	public function addUserToGroup(groupId : Int, userId : Int, label : String) : Bool
+	{
+
+		if(GroupUser.manager.select($gid == groupId && $uid == userId) == null)
+			new GroupUser(Group.manager.get(groupId), User.manager.get(userId), label, false).insert();
 		return true;
 	}
 
@@ -224,7 +263,7 @@ class Api
 			}
 			group.votesValue = group.upVotes - group.downVotes;
 		}
-		return groups;
+		return Group.toArray(groups);
 	}
 
 	/*
@@ -233,7 +272,7 @@ class Api
 
 	public function getEvents()
 	{
-		return Group.manager.search($status == Group.VALID && $type == Group.EVENT);
+		return Group.toArray(Group.manager.search($status == Group.VALID && $type == Group.EVENT));
 	}
 
 	public function getEvent(eventId : Int)
@@ -250,7 +289,7 @@ class Api
 				group.isUserAdmin = groupUser.admin;
 			}
 		}
-		return group;
+		return Group.toObject(group);
 	}
 
 	/*
@@ -265,10 +304,7 @@ class Api
 
 	public function getMessages(thread : String, since : Float)
 	{
-		var result = new Array<Dynamic>();
-		for(message in Message.manager.search($thread == thread && $created > Date.fromTime(since), {orderBy : created}))
-			result.push(message.getObject());
-		return result;
+		return Message.toArray(Message.manager.search($thread == thread && $created > Date.fromTime(since), {orderBy : created}));
 	}
 
 	/*
@@ -277,7 +313,7 @@ class Api
 	
 	public function getProjects()
 	{
-		return Group.manager.search($status == Group.VALID && $type == Group.PROJECT);
+		return Group.toArray(Group.manager.search($status == Group.VALID && $type == Group.PROJECT));
 	}
 
 	public function getProject(projectId : Int)
@@ -294,7 +330,7 @@ class Api
 				group.isUserAdmin = groupUser.admin;
 			}
 		}
-		return group;
+		return Group.toObject(group);
 	}
 
 	/*
@@ -303,7 +339,7 @@ class Api
 	
 	public function getTeams()
 	{
-		return Group.manager.search($status == Group.VALID && $type == Group.TEAM);
+		return Group.toArray(Group.manager.search($status == Group.VALID && $type == Group.TEAM));
 	}
 
 	public function getTeam(teamId : Int)
@@ -320,7 +356,62 @@ class Api
 				group.isUserAdmin = groupUser.admin;
 			}
 		}
-		return group;
+		return Group.toObject(group);
+	}
+
+	public function getSurveyData(surveyName : String)
+	{
+		var votes = SurveyVote.manager.search($survey == surveyName);
+
+		var itemsName = new Array<String>();
+		var userIds = new Array<Int>();
+		var itemsVotes = new Array<Int>();
+		var userVotes = new Array<Bool>();
+		var itemsCount = 0;
+		var totalVotes = 0;
+
+		for(vote in votes)
+		{
+			if(!Lambda.has(itemsName, vote.surveyItem))
+				itemsName.push(vote.surveyItem);
+			if(!Lambda.has(userIds, vote.user.id))
+				userIds.push(vote.user.id);
+		}
+		
+		itemsCount = itemsName.length;
+		totalVotes = userIds.length;
+
+		for(i in 0...itemsCount)
+		{
+			itemsVotes[i] = 0;
+			userVotes[i] = false;
+		}
+		for(vote in votes)
+		{
+			if(vote.user == user)
+				userVotes[Lambda.indexOf(itemsName, vote.surveyItem)] = true;
+			itemsVotes[Lambda.indexOf(itemsName, vote.surveyItem)] += 1;
+		}
+
+		return {itemsCount : itemsCount, totalVotes : totalVotes, itemsName : itemsName, itemsVotes : itemsVotes, userVotes : userVotes, }
+	}
+
+	public function voteForSurvey(surveyName : String, surveyItem : String, value : Bool)
+	{
+		if(value)
+		{
+			if(SurveyVote.manager.select($survey == surveyName && $surveyItem == surveyItem && $user == user) == null)
+				new SurveyVote(surveyName, surveyItem, user).insert();
+		}
+		else
+		{
+			var surveyVote = SurveyVote.manager.select($user == user && $survey == surveyName && $surveyItem == surveyItem);
+			if(surveyVote != null)
+				surveyVote.delete();
+		}
+
+
+		return true;
 	}
 
 }

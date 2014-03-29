@@ -13,16 +13,9 @@
 -cmd "temploc2 -cp src/templates -output www/templates -php --compact users.html"
 -cmd "temploc2 -cp src/templates -output www/templates -php --compact votes.html"
 -cmd "temploc2 -cp src/templates -output www/templates -php --compact messages.html"
-
---next
-
-# API
--cp src
--main Api
--php api
--lib templo
--cmd "temploc2 -cp src/templates -output api/templates -php --compact mails/format.html"
--cmd "temploc2 -cp src/templates -output api/templates -php --compact mails/register.html"
+-cmd "temploc2 -cp src/templates -output www/templates -php --compact api.html"
+-cmd "temploc2 -cp src/templates -output www/templates -php --compact mails/format.html"
+-cmd "temploc2 -cp src/templates -output www/templates -php --compact mails/register.html"
 
 --next
 

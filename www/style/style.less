@@ -346,6 +346,7 @@ div.user, a.user
 	white-space:nowrap;
 	overflow:hidden;
 	text-overflow : ellipsis;
+	background-size: 75px 75px;
 
 	&:active
 	{
@@ -361,6 +362,34 @@ div.user, a.user
 		min-height : initial;
 	}
 
+	&.add
+	{
+		background : none;
+		border : 3px dashed #999;
+		padding : 5px;
+		box-shadow : none;
+		width : 177px;
+
+		&:active
+		{
+			box-shadow : none;
+			position : static;
+		}
+
+		*
+		{
+			display : block;
+		}
+		input
+		{
+			width : 157px;
+		}
+		select
+		{
+			width : 167px;
+		}
+	}
+
 	.role
 	{
 		color : #999;
@@ -371,7 +400,7 @@ div.user, a.user
 section.user
 {
 	background-repeat : no-repeat;
-	background-size : 300px;
+	background-size : 300px 300px;
 	position : relative;
 
 	input.userPicture
@@ -433,6 +462,7 @@ section.user
 	box-shadow : 0px 2px 0px #BBB;
 	margin-top : -4px;
 	cursor : pointer;
+	background-size: 33px 33px;
 
 	&:active
 	{
@@ -446,6 +476,11 @@ section.group
 {
 	padding-top : 130px;
 	position : relative;
+
+	textarea.description
+	{
+		width : 100%;
+	}
 }
 
 .groupInfos
@@ -510,4 +545,41 @@ input.groupPicture
 	left: 0px;
 	border: none;
 	background-color: rgba(255,255,255,0.5);
+}
+
+.survey
+{
+	display : none;
+}
+.surveyWidget
+{
+	margin: 5px;
+	padding: 5px;
+	border : 2px solid #AAA;
+	border-radius : 5px;
+	.vote
+	{
+		.flex-box;
+
+		input[type="checkbox"]
+		{
+			position : relative;
+			.flex0;
+			margin: 5px;
+			vertical-align: middle;
+			top : 5px;
+		}
+		label
+		{
+			.flex0;
+			margin: 5px;
+		}
+		progress
+		{
+			.flex1;
+			margin: 5px;
+			position: relative;
+			top: 2px;
+		}
+	}
 }

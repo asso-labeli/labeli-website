@@ -3,67 +3,30 @@
 </section>
 <section>
 	<h1>Projets Récents</h1>
-	<a href="projects/1" class="group small" style="background : url('/www/images/background.png') repeat;">
-		<div class="info">
-			<div class="title">Project#11111111111111111111111111111111</div>
-			<div class="status">En cours</div>
-			<div class="author">par Alix Fumoleau</div>
-		</div>
-	</a>
-	<a href="projects/1" class="group small" style="background : url('/www/images/background.png') repeat;">
-		<div class="info">
-			<div class="title">Project#1</div>
-			<div class="status">En cours</div>
-			<div class="author">par Alix Fumoleau</div>
-		</div>
-	</a>
-	<a href="projects/1" class="group small" style="background : url('/www/images/background.png') repeat;">
-		<div class="info">
-			<div class="title">Project#1</div>
-			<div class="status">En cours</div>
-			<div class="author">par Alix Fumoleau</div>
-		</div>
-	</a>
-	<a href="projects/1" class="group small" style="background : url('/www/images/background.png') repeat;">
-		<div class="info">
-			<div class="title">Project#1</div>
-			<div class="status">En cours</div>
-			<div class="author">par Alix Fumoleau</div>
-		</div>
-	</a>
-
-	<div class="more"><a href="projects">Voir tous les projets</a></div>
+	
+	::foreach project projects::
+		<a href="/projects/::project.id::" class="group small" style="background : url('::tools.getPictureOrDefault(project, "images/background.png")::') repeat;">
+			<div class="info">
+				<div class="title">::project.name::</div>
+				<div class="status">En cours</div>
+				<div class="author">par ::project.author.firstName:: ::project.author.lastName::</div>
+			</div>
+		</a>
+	::end::
+	<div class="more"><a href="/projects">Voir tous les projets</a></div>
 </section>
 <section>
 	<h1>Évènements Récents</h1>
-	<a href="projects/1" class="group small" style="background : url('/www/images/background.png') repeat;">
-		<div class="info">
-			<div class="title">Project#1</div>
-			<div class="status">En cours</div>
-			<div class="author">par Alix Fumoleau</div>
-		</div>
-	</a>
-	<a href="projects/1" class="group small" style="background : url('/www/images/background.png') repeat;">
-		<div class="info">
-			<div class="title">Project#1</div>
-			<div class="status">En cours</div>
-			<div class="author">par Alix Fumoleau</div>
-		</div>
-	</a>
-	<a href="projects/1" class="group small" style="background : url('/www/images/background.png') repeat;">
-		<div class="info">
-			<div class="title">Project#1</div>
-			<div class="status">En cours</div>
-			<div class="author">par Alix Fumoleau</div>
-		</div>
-	</a>
-	<a href="projects/1" class="group small" style="background : url('/www/images/background.png') repeat;">
-		<div class="info">
-			<div class="title">Project#1</div>
-			<div class="status">En cours</div>
-			<div class="author">par Alix Fumoleau</div>
-		</div>
-	</a>
 
-	<div class="more"><a href="projects">Voir tous les évènements</a></div>
+	::foreach event events::
+		<a href="/events/::event.id::" class="group small" style="background : url('::tools.getPictureOrDefault(event, "images/background.png")::') repeat;">
+			<div class="info">
+				<div class="title">::event.name::</div>
+				<div class="status">En cours</div>
+				<div class="author">par ::event.author.firstName:: ::event.author.lastName::</div>
+			</div>
+		</a>
+	::end::
+
+	<div class="more"><a href="/projects">Voir tous les évènements</a></div>
 </section>

@@ -34,34 +34,40 @@ class Group extends sys.db.Object
 		date = null;
 	}
 
-	public function getObject()
+	public static function toObject(instance : Group)
 	{
+		if(instance == null)
+			return null;
 		return 
 		{
-			id : this.id,
-			created : this.created,
-			author : this.author,
-			type : this.type,
-			status : this.status,
-			name : this.name,
-			description : this.description,
-			date : this.date,
-			picture : this.picture,
+			id : instance.id,
+			created : instance.created.getTime(),
+			author : User.toObject(instance.author),
+			type : instance.type,
+			status : instance.status,
+			name : instance.name,
+			description : instance.description,
+			date : instance.date,
+			picture : instance.picture,
+			userVote : instance.userVote,
+			upVotes : instance.upVotes,
+			downVotes : instance.downVotes,
+			neutralVotes : instance.neutralVotes,
+			votesValue : instance.votesValue,
+			isUserIn : instance.isUserIn,
+			isUserAdmin : instance.isUserAdmin,
+			users : GroupUser.toArray(instance.users),
 		}
 	}
 
-	public function getTypeString() : String
+	public static function toArray(array : Iterable<Group>)
 	{
-		if (type == TEAM)
-			return "team";
-		if (type == EVENT)
-			return "event";
-		return "project";
-	}
-
-	public function getPictureOrDefault(defaultValue : String)
-	{
-		return picture == "" ? defaultValue : picture;
+		var result = new Array<Dynamic>();
+		if(array == null)
+			return result;
+		for(element in array)
+			result.push(toObject(element));
+		return result;
 	}
 
 	public var id : SId;

@@ -5,12 +5,12 @@
 ::end::
 
 ::foreach group groups::
-	<div class="group vote large" style="background : url('/www/::group.getPictureOrDefault("images/background.png")::') repeat;">
+	<div class="group vote large" style="background : url('::tools.getPictureOrDefault(group, "images/background.png")::') repeat;">
 		<div class="info">
 			<div class="infos">
-				<a href="::group.getTypeString()::s/::group.id::"><div class="title">::group.name::</div></a>
+				<a href="/::tools.getTypeString(group)::s/::group.id::"><div class="title">::group.name::</div></a>
 				<div class="status">[-::group.downVotes:: / ::group.neutralVotes:: / +::group.upVotes::] = ::group.votesValue::</div>
-				<div class="author">par ::group._author.firstName:: ::group._author.lastName::</div>
+				<div class="author">par ::group.author.firstName:: ::group.author.lastName::</div>
 			</div>
 			<div class="votes">
 				::if group.userVote == -1::
@@ -29,13 +29,13 @@
 					<div class="button up">+1</div>
 				::end::
 				<br />
-				<a href="/">0 Nouveaux messages</a>
+				<a href="/::tools.getTypeString(group)::s/::group.id::">0 Nouveaux messages</a>
 			</div>
 		</div>
 	</div>
 ::end::
 
-::if currentUser.logged && currentUser.isAdmin()::
+::if currentUser.logged && tools.isAdmin(currentUser)::
 	<section>
 		<h1>Ajouter un vote</h1>
 		<form action="#" method="POST" id="createGroup-form" class="inline">

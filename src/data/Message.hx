@@ -15,16 +15,28 @@ class Message extends sys.db.Object
 		this.content = content;
 	}
 
-	public function getObject()
+	public static function toObject(instance : Message)
 	{
+		if(instance == null)
+			return null;
 		return 
 		{
-			id : this.id,
-			created : this.created.getTime(),
-			author : this.author.getObject(),
-			thread : this.thread,
-			content : this.content,
+			id : instance.id,
+			created : instance.created.getTime(),
+			author : User.toObject(instance.author),
+			thread : instance.thread,
+			content : instance.content,
 		}
+	}
+
+	public static function toArray(array : Iterable<Message>)
+	{
+		var result = new Array<Dynamic>();
+		if(array == null)
+			return result;
+		for(element in array)
+			result.push(toObject(element));
+		return result;
 	}
 
 	public var id : SId;

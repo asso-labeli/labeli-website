@@ -2,21 +2,20 @@ package data;
 import sys.db.Types;
 
 @:id(id)
-@:table("next_groupUsers")
-class GroupUser extends sys.db.Object
+@:table("next_surveyVote")
+class SurveyVote extends sys.db.Object
 {
-	public function new(group : Group, user : User, label : String, admin : Bool)
+	public function new(survey : String, surveyItem : String, user : User)
 	{
 		super();
 
 		this.created = Date.now();
 		this.user = user;
-		this.group = group;
-		this.label = label;
-		this.admin = admin;
+		this.surveyItem = surveyItem;
+		this.survey = survey;
 	}
 
-	public static function toObject(instance : GroupUser)
+	public static function toObject(instance : SurveyVote)
 	{
 		if(instance == null)
 			return null;
@@ -25,13 +24,12 @@ class GroupUser extends sys.db.Object
 			id : instance.id,
 			created : instance.created.getTime(),
 			user : User.toObject(instance.user),
-			//group : Group.toObject(instance.group),
-			label : instance.label,
-			admin : instance.admin
+			survey : instance.survey,
+			surveyItem : instance.surveyItem
 		}
 	}
 
-	public static function toArray(array : Iterable<GroupUser>)
+	public static function toArray(array : Iterable<SurveyVote>)
 	{
 		var result = new Array<Dynamic>();
 		if(array == null)
@@ -43,8 +41,7 @@ class GroupUser extends sys.db.Object
 
 	public var id : SId;
 	public var created : Date;
+	public var survey : String;
+	public var surveyItem : String;
 	@:relation(uid) public var user : User;
-	@:relation(gid) public var group : Group;
-	public var label : String;
-	public var admin : Bool;
 }

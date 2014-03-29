@@ -33,23 +33,36 @@ class User extends sys.db.Object
 		picture = "";
 	}
 
-	public function getObject()
+	public static function toObject(instance : User) : {id : Int, created : Float, username : String, firstName : String, lastName : String, email : String, type : Int, universityGroup : String, description : String, role : String, birthday : Float, picture : String, logged : Bool }
 	{
-		return {
-			id : this.id,
-			username : this.username,
-			email : this.email,
-			firstName : this.firstName,
-			lastName : this.lastName,
-			passwordHash : this.passwordHash,
-			created : this.created,
-			type : this.type,
-			universityGroup : this.universityGroup,
-			description : this.description,
-			role : this.role,
-			birthday : this.birthday,
-			picture : this.picture
+		if(instance == null)
+			return null;
+		return
+		{
+			id : instance.id,
+			created : instance.created.getTime(),
+			username : instance.username,
+			firstName : instance.firstName,
+			lastName : instance.lastName,
+			email : instance.email,
+			type : instance.type,
+			universityGroup : instance.universityGroup,
+			description : instance.description,
+			role : instance.role,
+			birthday : instance.birthday != null ? instance.birthday.getTime() : null,
+			picture : instance.picture,
+			logged : instance.logged
 		}
+	}
+
+	public static function toArray(array : Iterable<User>)
+	{
+		var result = new Array<Dynamic>();
+		if(array == null)
+			return result;
+		for(element in array)
+			result.push(toObject(element));
+		return result;
 	}
 
 	public function isAdmin()
@@ -59,12 +72,8 @@ class User extends sys.db.Object
 
 	public static function encodePassword(password : String) : String
 	{
-		return password;
-	}
-
-	public function getPictureOrDefault(defaultValue : String)
-	{
-		return picture == "" ? defaultValue : picture;
+		var config = haxe.Json.parse(File.getContent("config.json"));
+		return haxe.crypto.Md5.encode(config.saltStart+password+config.saltEnd);
 	}
 	
 	public var id : SId;
@@ -72,10 +81,10 @@ class User extends sys.db.Object
 	@:relation(uid) public var author : Null<User>;
 	public var type : Int; //SEnum<UserType>;
 
-	public var email : String;
 	public var username : String;
 	public var firstName : String;
 	public var lastName : String;
+	public var email : String;
 	public var passwordHash : String;
 	public var universityGroup : String;
 	public var description : String;

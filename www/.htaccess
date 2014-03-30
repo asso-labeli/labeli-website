@@ -1,5 +1,5 @@
 RewriteEngine on
-RewriteBase /www
+RewriteBase /
 RewriteRule .* index.php [L,QSA]
 
 ErrorDocument 401 /error/401

@@ -1,0 +1,14 @@
+{
+	"root" : "/",
+	"saltStart" : "",
+	"saltEnd" : "",
+	"database" :
+	{
+		"host" : "localhost",
+		"port" : null,
+		"user" : "root",
+		"pass" : "",
+		"database" : "labeli",
+		"socket" : null
+	}
+}

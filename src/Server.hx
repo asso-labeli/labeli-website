@@ -31,6 +31,11 @@ class ServerTools
 		var date = Date.fromTime(timestamp);
 		return DateTools.format(date, format);
 	}
+
+	public function getRoot()
+	{
+		return Config.getData().root;
+	}
 }
 
 class Server
@@ -56,11 +61,11 @@ class Server
 
 		try
 		{
-			Dispatch.run(Web.getURI(), Web.getParams(), this);
+			Dispatch.run(Web.getURI().substring(tools.getRoot().length), Web.getParams(), this);
 		}
 		catch(error : DispatchError)
 		{
-			do404(new Dispatch(Web.getURI(), Web.getParams()));
+			do404(new Dispatch(Web.getURI().substring(tools.getRoot().length), Web.getParams()));
 		}
 
 		if(Web.getParams().get("template") == "false")

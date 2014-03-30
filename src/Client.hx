@@ -5,7 +5,7 @@ using DateTools;
 
 class Client
 {
-	private var subdomain = "/";
+	private var root = Config.getData().root;
 	private var context : haxe.remoting.HttpAsyncConnection;
 	private var syncContext : haxe.remoting.HttpConnection;
 
@@ -19,11 +19,12 @@ class Client
 
 	public function new()
 	{
+		//trace(js.Browser.document.location.pathname.substring(root.length).split("/"));
 		new JQuery(function()
 		{
-			context = haxe.remoting.HttpAsyncConnection.urlConnect("/api");
+			context = haxe.remoting.HttpAsyncConnection.urlConnect(root+"api");
 			context.setErrorHandler(onError);
-			syncContext = haxe.remoting.HttpConnection.urlConnect("/api");
+			syncContext = haxe.remoting.HttpConnection.urlConnect(root+"api");
 			
 			autoLogin();
 			initHistory();
@@ -52,7 +53,7 @@ class Client
 			if(anchorsInHistory > 0)
 				anchorsInHistory--;
 			else
-				loadURL(js.Browser.location.pathname);
+				loadURL(js.Browser.location.pathname.substring(root.length));
 		};
 	}
 
@@ -181,7 +182,7 @@ class Client
 
 	public function linkCallback(event : Event)
 	{
-		var link = new JQuery(event.target).closest("a").attr("href");
+		var link = new JQuery(event.target).closest("a").attr("href").substring(root.length);
 		if(!link.startsWith("#"))
 		{
 			event.preventDefault();
@@ -206,7 +207,7 @@ class Client
 			if(user != null && user.id != null)
 			{
 				switchToUserInterface();
-				loadURL("/index");
+				loadURL("index");
 			}
 			else
 				new JQuery("form").after("<div class=\"message error\">Les identifiants sont incorrects.</div>").next().delay(3000).fadeOut(250);
@@ -217,8 +218,8 @@ class Client
 	{
 		new JQuery("#navUser").show();
 		new JQuery("#navUser").html(user.firstName+" ↓");
-		new JQuery(".additionalLinks a:first-child").attr("href", "/users/"+user.id);
-		new JQuery("#navUser").css("background-image", "url('/"+user.picture+"')");
+		new JQuery(".additionalLinks a:first-child").attr("href", root+"users/"+user.id);
+		new JQuery("#navUser").css("background-image", "url('"+root+user.picture+"')");
 		new JQuery("#loginLink").hide();
 	}
 
@@ -228,7 +229,7 @@ class Client
 		
 		if(syncContext.api.logout.call([]))
 		{
-			loadURL("/index");
+			loadURL("index");
 			new JQuery("#loginLink").show();
 			new JQuery("#navUser").hide();
 			new JQuery("#navUser").next().hide();
@@ -310,7 +311,7 @@ class Client
 
 	public function leaveGroupCallback(event : Event)
 	{
-		context.api.leaveGroup.call([Std.parseInt(js.Browser.document.location.pathname.split("/")[2])], function(result : Bool)
+		context.api.leaveGroup.call([Std.parseInt(js.Browser.document.location.pathname.substring(root.length).split("/")[2])], function(result : Bool)
 		{
 			if(result)
 				reloadURL();
@@ -319,7 +320,7 @@ class Client
 
 	public function joinGroupCallback(event : Event)
 	{
-		context.api.joinGroup.call([Std.parseInt(js.Browser.document.location.pathname.split("/")[2])], function(result : Bool)
+		context.api.joinGroup.call([Std.parseInt(js.Browser.document.location.pathname.substring(root.length).split("/")[2])], function(result : Bool)
 		{
 			if(result)
 				reloadURL();
@@ -341,7 +342,7 @@ class Client
 					new JQuery("section.group").find(".description").replaceWith("<div class=\"description\">"+description+"</div>");
 					new JQuery("#uploadImage").remove();
 					if(picture != null)
-						new JQuery(".group").css("background-image", "url(/"+picture+")");
+						new JQuery(".group").css("background-image", "url("+root+picture+")");
 				}
 			});
 		}
@@ -383,7 +384,7 @@ class Client
 		}
 
 		// Retrieve group id
-		var groupId = Std.parseInt(js.Browser.document.location.pathname.split("/")[2]);
+		var groupId = Std.parseInt(js.Browser.document.location.pathname.substring(root.length).split("/")[2]);
 		
 		// Set title and description to be editable and add a form to upload picture
 		new JQuery("section.group").find("h1").css("min-height", ""+(new JQuery("section.group").find("h1").height()-2)+"px");
@@ -407,7 +408,7 @@ class Client
 	public function addUserToGroupCallback(event : Event)
 	{
 		event.preventDefault();
-		var groupId = Std.parseInt(js.Browser.document.location.pathname.split("/")[2]);
+		var groupId = Std.parseInt(js.Browser.document.location.pathname.substring(root.length).split("/")[2]);
 		context.api.addUserToGroup.call([groupId, new JQuery("#newUserId").val(), new JQuery("#newUserLabel").val()], function(result : Bool)
 		{
 			if(result)
@@ -420,7 +421,7 @@ class Client
 	public function validateGroupCallback(event : Event)
 	{
 		// Retrieve group id
-		var groupId = Std.parseInt(js.Browser.document.location.pathname.split("/")[2]);
+		var groupId = Std.parseInt(js.Browser.document.location.pathname.substring(root.length).split("/")[2]);
 
 		context.api.validateGroup.call([groupId], function(result : Bool)
 		{
@@ -435,7 +436,7 @@ class Client
 	public function unvalidateGroupCallback(event : Event)
 	{
 		// Retrieve group id
-		var groupId = Std.parseInt(js.Browser.document.location.pathname.split("/")[2]);
+		var groupId = Std.parseInt(js.Browser.document.location.pathname.substring(root.length).split("/")[2]);
 
 		context.api.unvalidateGroup.call([groupId], function(result : Bool)
 		{
@@ -450,7 +451,7 @@ class Client
 	public function deleteGroupCallback(event : Event)
 	{
 		// Retrieve group id
-		var groupId = Std.parseInt(js.Browser.document.location.pathname.split("/")[1]);
+		var groupId = Std.parseInt(js.Browser.document.location.pathname.substring(root.length).split("/")[1]);
 		context.api.deleteGroup.call([groupId], function(result : Bool) {});
 		loadURL(js.Browser.document.location.pathname.split("/")[1]);
 	}
@@ -474,7 +475,7 @@ class Client
 					new JQuery("section.user").find(".description").replaceWith("<div class=\"description\">"+description+"</div>");
 					new JQuery("#uploadImage").remove();
 					if(picture != null)
-						new JQuery("section.user").css("background-image", "url(/"+picture+")");
+						new JQuery("section.user").css("background-image", "url("+root+picture+")");
 				}
 			});
 		}
@@ -532,7 +533,7 @@ class Client
 		}
 
 		// Retrieve user id
-		var userId = Std.parseInt(js.Browser.document.location.pathname.split("/")[2]);
+		var userId = Std.parseInt(js.Browser.document.location.pathname.substring(root.length).split("/")[1]);
 		
 		// Set title and description to be editable and add a form to upload picture
 		if(admin)
@@ -565,6 +566,7 @@ class Client
 
 	public function loadURL(url : String)
 	{
+		url = root+url;
 		new JQuery("#content").hide();
 		new JQuery("#loading").animate({opacity : 1}, 250);
 
@@ -594,7 +596,7 @@ class Client
 		untyped __js__("formData.append(\"file\", input.files[0]);");
 
 		JQueryStatic.ajax({
-			url: "/upload",
+			url: root+"upload",
 			type: "POST",
 			data: formData,
 			complete : callback,

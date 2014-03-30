@@ -1,5 +1,5 @@
 ::if group::
-	<section class="group" style="background-image : url('/::tools.getPictureOrDefault(group, "images/background.png")::');">
+	<section class="group" style="background-image : url('::tools.getRoot()::::tools.getPictureOrDefault(group, "images/background.png")::');">
 		<h1>::group.name::</h1>
 		<div class="description">::raw group.description::</div>
 		<div id="widgets"></div>
@@ -34,7 +34,7 @@
 			<h2>Participants</h2>
 			<br />
 			::foreach groupUser group.users::
-				<a class="user" href="/users/::groupUser.user.id::" style="background-image : url('/::tools.getPictureOrDefault(groupUser.user, "images/avatar.png")::');">
+				<a class="user" href="::tools.getRoot()::users/::groupUser.user.id::" style="background-image : url('::tools.getRoot()::::tools.getPictureOrDefault(groupUser.user, "images/avatar.png")::');">
 					::groupUser.user.firstName::<br />
 					::groupUser.user.lastName::<br />
 					<span class="role">::groupUser.label::</span>
@@ -54,7 +54,7 @@
 		</div>
 		<div class="messages">
 			<h2>Messages</h2>
-			<div class="chatBox" href="/::tools.getTypeString(group)::/::group.id::">
+			<div class="chatBox" href="::tools.getTypeString(group)::/::group.id::">
 				<div class="messages">
 				</div>
 				::if currentUser.logged::
@@ -75,7 +75,7 @@
 		</section>
 	::end::
 	::foreach group groups::
-		<a href="/events/::group.id::" class="group" style="background : url('/::tools.getPictureOrDefault(group, "images/background.png")::') repeat;">
+		<a href="::tools.getRoot()::events/::group.id::" class="group" style="background : url('::tools.getRoot()::::tools.getPictureOrDefault(group, "images/background.png")::') repeat;">
 			<div class="info">
 				<div class="title">::group.name::</div>
 				<div class="status">En cours</div>

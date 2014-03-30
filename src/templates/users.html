@@ -1,5 +1,5 @@
 ::if user::
-	<section class="user" style="background-image : url(/::tools.getPictureOrDefault(user, "images/avatar.png")::);">
+	<section class="user" style="background-image : url(::tools.getRoot()::::tools.getPictureOrDefault(user, "images/avatar.png")::);">
 		<div class="infos">
 			<h1>::user.firstName:: ::user.lastName::</h1>
 			<div class="created">
@@ -32,7 +32,7 @@
 		::if currentUser.id == user.id::
 			<div class="button" id="editUser">Éditer mon profil</div>
 		::else::
-			<a href="/messages?user=::user.id::" class="button">Contacter ce membre</a>
+			<a href="::tools.getRoot()::messages?user=::user.id::" class="button">Contacter ce membre</a>
 		::end::
 	</section>
 
@@ -45,12 +45,12 @@
 ::else::
 
 	::foreach user users::
-		<a class="user" href="/users/::user.id::" style="background-image : url('::tools.getPictureOrDefault(user, "images/avatar.png")::');">::user.firstName::<br />::user.lastName::<br /> <span class="role">::user.role::</span> </a>
+		<a class="user" href="::tools.getRoot()::users/::user.id::" style="background-image : url('::tools.getRoot()::::tools.getPictureOrDefault(user, "images/avatar.png")::');">::user.firstName::<br />::user.lastName::<br /> <span class="role">::user.role::</span> </a>
 	::end::
 
 	<h1>Anciens membres</h1>
 	::foreach user oldUsers::
-		<a class="user old" href="/users/::user.id::">::user.firstName:: ::user.lastName::<br /></a>
+		<a class="user old" href="::tools.getRoot()::users/::user.id::">::user.firstName:: ::user.lastName::<br /></a>
 	::end::
 
 	::if currentUser.logged && tools.isAdmin(currentUser)::

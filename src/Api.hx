@@ -8,7 +8,6 @@ using DateTools;
 class Api
 {
 	static var instance : Api;
-	static var config : Dynamic;
 	private var user : User;
 
 	public function new()
@@ -16,11 +15,8 @@ class Api
 		// Start php session
 		Session.start();
 
-		// Load config
-		config = haxe.Json.parse(File.getContent("config.json"));
-
 		// Load Database
-		sys.db.Manager.cnx = sys.db.Mysql.connect(config.database);
+		sys.db.Manager.cnx = sys.db.Mysql.connect(Config.getData().database);
 		if(!sys.db.TableCreate.exists(User.manager))  { sys.db.TableCreate.create(User.manager);  }
 		if(!sys.db.TableCreate.exists(Group.manager)) { sys.db.TableCreate.create(Group.manager); }
 		if(!sys.db.TableCreate.exists(Vote.manager)) { sys.db.TableCreate.create(Vote.manager); }
@@ -55,7 +51,6 @@ class Api
 			user.logged = true;
 			Session.set("id", user.id);
 		}
-
 		return User.toObject(newUser);
 	}
 

@@ -5,7 +5,7 @@
 	<h1>Projets Récents</h1>
 	
 	::foreach project projects::
-		<a href="/projects/::project.id::" class="group small" style="background : url('::tools.getPictureOrDefault(project, "images/background.png")::') repeat;">
+		<a href="::tools.getRoot()::projects/::project.id::" class="group small" style="background : url('::tools.getPictureOrDefault(project, "images/background.png")::') repeat;">
 			<div class="info">
 				<div class="title">::project.name::</div>
 				<div class="status">En cours</div>
@@ -13,13 +13,13 @@
 			</div>
 		</a>
 	::end::
-	<div class="more"><a href="/projects">Voir tous les projets</a></div>
+	<div class="more"><a href="::tools.getRoot()::projects">Voir tous les projets</a></div>
 </section>
 <section>
 	<h1>Évènements Récents</h1>
 
 	::foreach event events::
-		<a href="/events/::event.id::" class="group small" style="background : url('::tools.getPictureOrDefault(event, "images/background.png")::') repeat;">
+		<a href="::tools.getRoot()::events/::event.id::" class="group small" style="background : url('::tools.getPictureOrDefault(event, "images/background.png")::') repeat;">
 			<div class="info">
 				<div class="title">::event.name::</div>
 				<div class="status">En cours</div>
@@ -28,5 +28,5 @@
 		</a>
 	::end::
 
-	<div class="more"><a href="/projects">Voir tous les évènements</a></div>
+	<div class="more"><a href="::tools.getRoot()::projects">Voir tous les évènements</a></div>
 </section>

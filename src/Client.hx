@@ -11,6 +11,7 @@ class Client
 
 	private var anchorsInHistory = 1;
 	private var user : Dynamic;
+	private var chatboxRefreshId : Null<Int> = null;
 
 	static function main()
 	{
@@ -81,8 +82,17 @@ class Client
 
 		new JQuery("#editUser").off("click").on("click", editUserCallback);
 
+		new JQuery("#mailSend").off("click").on("click", sendMailCallback);
+		new JQuery("#mailPreview").off("click").on("click", previewMailCallback);
+		new JQuery("#mailPreviewSection").hide();
+
 		var chatBox = new JQuery(".chatBox");
 		var messageTime = 0;
+		if(chatboxRefreshId != null)
+		{
+			js.Browser.window.clearInterval(chatboxRefreshId);
+			chatboxRefreshId = null;
+		}
 		if(chatBox.length > 0)
 		{
 			function refresh()
@@ -109,7 +119,7 @@ class Client
 					}
 				});
 			}
-			js.Browser.window.setInterval(refresh, 1000);
+			chatboxRefreshId = js.Browser.window.setInterval(refresh, 1000);
 
 			chatBox.find("form").off("submit").on("submit", function(event : Event)
 			{
@@ -311,7 +321,7 @@ class Client
 
 	public function leaveGroupCallback(event : Event)
 	{
-		context.api.leaveGroup.call([Std.parseInt(js.Browser.document.location.pathname.substring(root.length).split("/")[2])], function(result : Bool)
+		context.api.leaveGroup.call([Std.parseInt(js.Browser.document.location.pathname.substring(root.length).split("/")[1])], function(result : Bool)
 		{
 			if(result)
 				reloadURL();
@@ -320,7 +330,7 @@ class Client
 
 	public function joinGroupCallback(event : Event)
 	{
-		context.api.joinGroup.call([Std.parseInt(js.Browser.document.location.pathname.substring(root.length).split("/")[2])], function(result : Bool)
+		context.api.joinGroup.call([Std.parseInt(js.Browser.document.location.pathname.substring(root.length).split("/")[1])], function(result : Bool)
 		{
 			if(result)
 				reloadURL();
@@ -384,7 +394,7 @@ class Client
 		}
 
 		// Retrieve group id
-		var groupId = Std.parseInt(js.Browser.document.location.pathname.substring(root.length).split("/")[2]);
+		var groupId = Std.parseInt(js.Browser.document.location.pathname.substring(root.length).split("/")[1]);
 		
 		// Set title and description to be editable and add a form to upload picture
 		new JQuery("section.group").find("h1").css("min-height", ""+(new JQuery("section.group").find("h1").height()-2)+"px");
@@ -408,7 +418,7 @@ class Client
 	public function addUserToGroupCallback(event : Event)
 	{
 		event.preventDefault();
-		var groupId = Std.parseInt(js.Browser.document.location.pathname.substring(root.length).split("/")[2]);
+		var groupId = Std.parseInt(js.Browser.document.location.pathname.substring(root.length).split("/")[1]);
 		context.api.addUserToGroup.call([groupId, new JQuery("#newUserId").val(), new JQuery("#newUserLabel").val()], function(result : Bool)
 		{
 			if(result)
@@ -421,7 +431,7 @@ class Client
 	public function validateGroupCallback(event : Event)
 	{
 		// Retrieve group id
-		var groupId = Std.parseInt(js.Browser.document.location.pathname.substring(root.length).split("/")[2]);
+		var groupId = Std.parseInt(js.Browser.document.location.pathname.substring(root.length).split("/")[1]);
 
 		context.api.validateGroup.call([groupId], function(result : Bool)
 		{
@@ -436,7 +446,7 @@ class Client
 	public function unvalidateGroupCallback(event : Event)
 	{
 		// Retrieve group id
-		var groupId = Std.parseInt(js.Browser.document.location.pathname.substring(root.length).split("/")[2]);
+		var groupId = Std.parseInt(js.Browser.document.location.pathname.substring(root.length).split("/")[1]);
 
 		context.api.unvalidateGroup.call([groupId], function(result : Bool)
 		{
@@ -604,5 +614,54 @@ class Client
 			contentType: false,
 			processData: false
 		});
+	}
+
+	public function sendMailCallback(event : Event)
+	{
+		event.preventDefault();
+		var content = new JQuery("#mailContent").val();
+		var title = new JQuery("#mailTitle").val();
+		var sendAsAdmin = new JQuery("#mailSendAsAdmin").is(':checked');
+		var preformat = new JQuery("#mailPreformat").is(':checked');
+		var recipientId = switch(new JQuery("input[name=\"recipient\"]:checked").val())
+		{
+			case "bureau" : -1;
+			case "all" : 0;
+			case "user" : Std.parseInt(new JQuery("#mailRecipientUser").val());
+			default : throw "Undefined recipient";
+		};
+
+		context.api.sendMail.call([title, content, recipientId, preformat, sendAsAdmin], function(result : Bool)
+		{
+			trace(result);
+		});
+
+	}
+
+	public function previewMailCallback(event : Event)
+	{
+		event.preventDefault();
+		var content = new JQuery("#mailContent").val();
+		var title = new JQuery("#mailTitle").val();
+		var sendAsAdmin = new JQuery("#mailSendAsAdmin").is(':checked');
+		var preformat = new JQuery("#mailPreformat").is(':checked');
+		var recipientId = switch(new JQuery("input[name=\"recipient\"]:checked").val())
+		{
+			case "bureau" : -1;
+			case "all" : 0;
+			case "user" : Std.parseInt(new JQuery("#mailRecipientUser").val());
+			default : throw "Undefined recipient";
+		};
+
+		context.api.previewMail.call([title, content, preformat], function(result : Bool)
+		{
+			if(result)
+			{
+				new JQuery("#mailPreviewSection").show();
+				var iframe : js.html.IFrameElement = cast(new JQuery("#mailPreviewSection iframe").get(0));
+				iframe.contentDocument.location.reload();
+			}
+		});
+
 	}
 }

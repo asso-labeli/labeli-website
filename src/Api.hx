@@ -409,4 +409,56 @@ class Api
 		return true;
 	}
 
+	public function sendMail(title : String, content : String, recipientId : Int, preformat : Bool, sendAsAdmin : Bool) : Bool
+	{
+		var mail : Mail = (preformat && user.isAdmin()) ? new FormattedMail(title) : new Mail();
+				
+		if(sendAsAdmin && user.isAdmin())
+		{
+			mail.subject = "Label[i] - "+title;
+			mail.sender = {name : "Label[i]", email : "contact@labeli.org"};
+		}
+		else
+		{
+			mail.subject = title;
+			mail.sender = {name : user.firstName+" "+user.lastName, email : user.email};
+		}
+
+		mail.content = content;
+
+		if(recipientId == 0)
+		{
+			if(user.isAdmin())
+			{
+				var users = User.manager.search($type != User.OLD, {orderBy : firstName});
+				for(recipient in users)
+					mail.recipients.push({name : recipient.firstName+" "+recipient.lastName, email : recipient.email});
+			}
+		}
+		else if(recipientId == -1)
+		{
+			var bureau = User.manager.search($type == User.ADMIN);
+			for(recipient in bureau)
+				mail.recipients.push({name : recipient.firstName+" "+recipient.lastName, email : recipient.email});
+		}
+		else
+		{
+			var recipient = User.manager.get(recipientId);
+			if(recipient == null)
+				throw "can't find recipient with id "+recipientId;
+			mail.recipients.push({name : recipient.firstName+" "+recipient.lastName, email : recipient.email});
+		}
+
+		return mail.send();
+	}
+
+	public function previewMail(title : String, content : String, preformat : Bool) : Bool
+	{
+		var mailContent = content;
+		if(preformat && user.isAdmin())
+			mailContent = new templo.Loader("mails/format.html").execute({title : title, content : content});
+		sys.FileSystem.createDirectory("files");
+		sys.io.File.saveContent("files/newsletter.html", mailContent);
+		return true;
+	}
 }

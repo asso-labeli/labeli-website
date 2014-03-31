@@ -1,69 +1,39 @@
 <section>
 	<h1>Envoyer un mail</h1>
-	
-	<form action="#" method="POST">
+	<form method="POST">
 		<label>Destinataire</label><br />
-		::if tools.isAdmin(user)::
-			::if formData.recipients == "all"::
-				<input type="radio" name="recipients" value="all" id="all" checked="checked" />
-			::else::
-				<input type="radio" name="recipients" value="all" id="all" />
-			::end::
-		::else::
-			<input type="radio" name="recipients" value="all" id="all" disabled="disabled" />
-		::end::
+
+		<input type="radio" name="recipient" value="all" id="all" />
 		<label for="all">Tous les membres</label><br />
 		
-		::if formData.recipients == "bureau"::
-			<input type="radio" name="recipients" value="bureau" id="bureau" checked="checked" />
-		::else::
-			<input type="radio" name="recipients" value="bureau" id="bureau" />
-		::end::
+		<input type="radio" name="recipient" value="bureau" id="bureau" />
 		<label for="bureau">Tout le bureau</label><br />
-
-		::if formData.recipients == "user"::
-			<input type="radio" name="recipients" value="user" id="user" checked="checked" />
-		::else::
-			<input type="radio" name="recipients" value="user" id="user" />
-		::end::
+		
+		<input type="radio" name="recipient" value="user" id="user" />
 		<label for="user">Un membre :</label>
-		<select name="user">
-			::foreach oneUser users::
-				::if formData.selectedUser == oneUser.id::
-					<option value="::oneUser.id::" selected="selected">::oneUser.firstName:: ::oneUser.lastName::</option>
-				::else::
-					<option value="::oneUser.id::">::oneUser.firstName:: ::oneUser.lastName::</option>
-				::end::
+		<select name="mailRecipientUser" id="mailRecipientUser">
+			::foreach user users::
+				<option value="::user.id::">::user.firstName:: ::user.lastName::</option>
 			::end::
 		</select><br />
 
 		<br />
-		<label for="title">Titre</label><br />
-		<input type="text" name="title" id="title" value="::formData.title::"/><br />
+		
+		<label for="mailTitle">Titre</label><br />
+		<input type="text" name="title" id="mailTitle"/><br />
 		<label for="mailContent">Contenu</label><br />
-		<textarea name="content" id="mailContent">::formData.content::</textarea><br />
+		<textarea name="content" id="mailContent"></textarea><br />
 
-		::if tools.isAdmin(user)::
-			<label>Options</label><br />
-			::if formData.format::
-				<input type="checkbox" name="format" id="format" checked="checked" /><label for="format">Préformatter le mail</label><br />
-			::else::
-				<input type="checkbox" name="format" id="format" /><label for="format">Préformatter le mail</label><br />
-			::end::
+		<label>Options</label><br />
+		<input type="checkbox" name="mailPreformat" id="mailPreformat" /><label for="mailPreformat">Préformatter le mail</label><br />
+		<input type="checkbox" name="mailSendAsAdmin" id="mailSendAsAdmin" /><label for="mailSendAsAdmin">Envoyer depuis contact@labeli.org</label><br />
 
-			::if formData.global::
-				<input type="checkbox" name="global" id="global" checked="checked" /><label for="global">Envoyer depuis contact@labeli.org</label><br />
-			::else::
-				<input type="checkbox" name="global" id="global" /><label for="global">Envoyer depuis contact@labeli.org</label><br />
-			::end::
-		::end::
-		<input type="submit" value="Envoyer" name="send" />
-		<input type="submit" value="Prévisualiser" name="preview" />
+		<input type="submit" value="Envoyer" name="send" id="mailSend" />
+		<input type="submit" value="Prévisualiser" name="preview" id="mailPreview" />
 	</form>
 </section>
-::if preview::
-<h2>Prévisualisation</h2>
-<section>
-	<iframe src="::tools.getRoot()::tmp/newsletter.html"></iframe>
+
+<section id="mailPreviewSection">
+	<h2>Prévisualisation</h2>
+	<iframe src="::tools.getRoot()::files/newsletter.html"></iframe>
 </section>
-::end::

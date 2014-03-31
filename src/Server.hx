@@ -139,7 +139,7 @@ class Server
 	}
 	public function doMessages(dispatch : Dispatch)
 	{
-		var data = {tools : tools, currentUser : api.getCurrentUser()};
+		var data = {tools : tools, currentUser : api.getCurrentUser(), users : api.getUsers()};
 		result = new templo.Loader("messages.html").execute(data);
 	}
 	public function doPresentation(dispatch : Dispatch)

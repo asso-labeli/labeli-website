@@ -67,6 +67,9 @@ class Api
 
 	public function createUser(firstName : String, lastName : String, email : String) : Bool
 	{
+		if(!user.isAdmin())
+			throw "You don't have rights to do this";
+
 		if(user.isAdmin())
 		{
 			var newUser = new User();
@@ -98,6 +101,9 @@ class Api
 
 	public function editUser(userId : Int, role : String, universityGroup : String, birthday : Int, description : String, picture : String) : Bool
 	{
+		if(!user.isAdmin() && userId != getCurrentUser().id)
+			throw "You don't have rights to do this";
+			
 		var user = User.manager.get(userId);
 		if(getCurrentUser().type == User.ADMIN)
 			user.role = role;
@@ -136,6 +142,9 @@ class Api
 	
 	public function createGroup(name : String, userId : Int, type : String) : Bool
 	{
+		if(!user.isAdmin())
+			throw "You don't have rights to do this";
+
 		var newGroup = new Group();
 		newGroup.author = User.manager.get(userId);
 		newGroup.type = switch(type)
@@ -171,6 +180,10 @@ class Api
 	public function editGroup(groupId : Int, name : String, description : String, picture : String)
 	{
 		var group = Group.manager.get(groupId, true);
+
+		if(!user.isAdmin() && group.author.id != getCurrentUser().id)
+			throw "You don't have rights to do this";
+
 		group.name = name;
 		group.description = description;
 		if(picture != null)
@@ -183,6 +196,9 @@ class Api
 
 	public function validateGroup(groupId : Int) : Bool
 	{
+		if(!user.isAdmin())
+			throw "You don't have rights to do this";
+
 		var group = Group.manager.get(groupId);
 		group.status = Group.VALID;
 		group.update();
@@ -191,6 +207,9 @@ class Api
 
 	public function unvalidateGroup(groupId : Int) : Bool
 	{
+		if(!user.isAdmin())
+			throw "You don't have rights to do this";
+
 		var group = Group.manager.get(groupId);
 		group.status = Group.INVOTE;
 		group.update();
@@ -199,6 +218,9 @@ class Api
 
 	public function deleteGroup(groupId : Int) : Bool
 	{
+		if(!user.isAdmin())
+			throw "You don't have rights to do this";
+
 		var group = Group.manager.get(groupId);
 		group.delete();
 		return true;
@@ -206,6 +228,8 @@ class Api
 
 	public function addUserToGroup(groupId : Int, userId : Int, label : String) : Bool
 	{
+		if(!user.isAdmin() && userId != getCurrentUser().id)
+			throw "You don't have rights to do this";
 
 		if(GroupUser.manager.select($gid == groupId && $uid == userId) == null)
 			new GroupUser(Group.manager.get(groupId), User.manager.get(userId), label, false).insert();
@@ -236,7 +260,6 @@ class Api
 
 	public function getVotes()
 	{
-
 		var groups = Group.manager.search($status == Group.INVOTE);
 		for(group in groups)
 		{
@@ -411,6 +434,9 @@ class Api
 
 	public function sendMail(title : String, content : String, recipientId : Int, preformat : Bool, sendAsAdmin : Bool) : Bool
 	{
+		if(!user.logged)
+			throw "You don't have rights to do this";
+
 		var mail : Mail = (preformat && user.isAdmin()) ? new FormattedMail(title) : new Mail();
 				
 		if(sendAsAdmin && user.isAdmin())

@@ -2,7 +2,7 @@ package data;
 import sys.db.Types;
 
 @:id(id)
-@:table("next_surveyVote")
+@:table("v4_surveyVotes")
 class SurveyVote extends sys.db.Object
 {
 	public function new(survey : String, surveyItem : String, user : User)

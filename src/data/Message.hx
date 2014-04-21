@@ -2,7 +2,7 @@ package data;
 import sys.db.Types;
 
 @:id(id)
-@:table("next_messages")
+@:table("v4_messages")
 class Message extends sys.db.Object
 {
 	public function new(thread : String, content : String, user : User)

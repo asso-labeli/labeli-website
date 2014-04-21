@@ -2,7 +2,7 @@ package data;
 import sys.db.Types;
 
 @:id(id)
-@:table("next_groups")
+@:table("v4_groups")
 class Group extends sys.db.Object
 {
 	//enum GroupType

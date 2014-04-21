@@ -2,7 +2,7 @@ package data;
 import sys.db.Types;
 
 @:id(id)
-@:table("next_groupUsers")
+@:table("v4_groupUsers")
 class GroupUser extends sys.db.Object
 {
 	public function new(group : Group, user : User, label : String, admin : Bool)

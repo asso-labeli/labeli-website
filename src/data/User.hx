@@ -2,7 +2,7 @@ package data;
 import sys.db.Types;
 
 @:id(id)
-@:table("next_users")
+@:table("v4_users")
 class User extends sys.db.Object
 {
 	//enum UserType

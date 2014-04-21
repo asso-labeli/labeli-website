@@ -4,7 +4,7 @@
 <section>
 	<h1>Projets Récents</h1>
 	
-	::foreach project projects::
+	::foreach project projects.splice(0, 8)::
 		<a href="::tools.getRoot()::projects/::project.id::" class="group small" style="background : url('::tools.getPictureOrDefault(project, "images/background.png")::') repeat;">
 			<div class="info">
 				<div class="title">::project.name::</div>
@@ -18,7 +18,7 @@
 <section>
 	<h1>Évènements Récents</h1>
 
-	::foreach event events::
+	::foreach event events.splice(0, 8)::
 		<a href="::tools.getRoot()::events/::event.id::" class="group small" style="background : url('::tools.getPictureOrDefault(event, "images/background.png")::') repeat;">
 			<div class="info">
 				<div class="title">::event.name::</div>
@@ -28,5 +28,5 @@
 		</a>
 	::end::
 
-	<div class="more"><a href="::tools.getRoot()::projects">Voir tous les évènements</a></div>
+	<div class="more"><a href="::tools.getRoot()::events">Voir tous les évènements</a></div>
 </section>

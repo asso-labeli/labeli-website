@@ -260,7 +260,7 @@ class Api
 
 	public function getVotes()
 	{
-		var groups = Group.manager.search($status == Group.INVOTE);
+		var groups = Group.manager.search($status == Group.INVOTE, {orderBy : -created});
 		for(group in groups)
 		{
 			group.userVote = 0;
@@ -416,6 +416,9 @@ class Api
 
 	public function voteForSurvey(surveyName : String, surveyItem : String, value : Bool)
 	{
+		if(!user.logged)
+			throw "You don't have rights to do this";
+
 		if(value)
 		{
 			if(SurveyVote.manager.select($survey == surveyName && $surveyItem == surveyItem && $user == user) == null)

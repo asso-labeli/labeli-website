@@ -133,61 +133,59 @@ class Client
 
 
 		var surveys = new JQuery(".survey");
-		if(surveys.length > 0)
+		var widgets = new JQuery("#widgets");
+		surveys.each(function(i : Int, element : js.html.Node)
 		{
-			function loadSurveyData(survey : JQuery)
+			var surveyName = new JQuery(element).attr("name");
+			var voteItems = new Array<String>();
+			new JQuery(element).find("label").each(function(i2 : Int, element2 : js.html.Node) { voteItems.push(new JQuery(element2).html()); });
+
+			context.api.getSurveyData.call([surveyName], function(result : Dynamic)
 			{
-				var surveyName = survey.attr("name");
-				context.api.getSurveyData.call([surveyName], function(result : Dynamic)
+				widgets.append("<table class=\"surveyWidget\" name=\""+surveyName+"\"></table>");
+				var surveyHTML = widgets.last();
+				for(item in voteItems)
 				{
-					trace(result);
-					survey.find("label").each(function(i2 : Int, element2 : js.html.Node)
+					var index = Lambda.indexOf(result.itemsName, item);
+
+					trace(user.id != null);
+					surveyHTML.append("<tr class=\"vote\">"+
+						(user.id != null ? "<td><input id=\"surveyItem-"+item+"\" type=\"checkbox\" name=\""+item+"\"" + (result.userVotes[index] ? "checked=\"true\"" : "") + "\" /></td>" : "")+
+						"<td><label for=\"surveyItem-"+item+"\">"+item+"</label></td>
+						<td><progress value=\""+(result.itemsVotes[index] == null ? 0 : result.itemsVotes[index])+"\" max=\""+result.totalVotes+"\"></progress></td>
+						</tr>");
+
+					if(user.id != null)
 					{
-						var label = new JQuery(element2);
-						var name = label.attr("for").substring("surveyItem-".length);
-						var index = Lambda.indexOf(result.itemsName, name);
-
-						label.next().attr("value", Std.string(result.itemsVotes[index] == null ? 0 : result.itemsVotes[index]));
-						label.next().attr("max", Std.string(result.totalVotes));
-						if(result.userVotes[index])
-							label.prev().attr("checked", "true");
-					});
-
-				});
-
+						var checkbox = surveyHTML.last().last().find("input[type=\"checkbox\"]");
+						checkbox.off("click").on("click", function(event : Event)
+						{
+							var checkbox = new JQuery(event.target); 
+							var checked = checkbox.is(':checked');
+							context.api.voteForSurvey.call([surveyName, checkbox.attr("name"), checked], function(result : Bool)
+							{
+								checkbox.attr("checked", Std.string(checked));
+								/*label.next().attr("value", Std.parseInt(label.next().attr("value")) + (if(checked) 1 else -1));
+								if(Std.parseInt(label.next().attr("value")) > Std.parseInt(label.next().attr("max")))
+								{
+									label.parent().find("progress").attr("max", Std.parseInt(label.next().attr("max"))+1);
+								}*/
+							});
+						});
+					}
+				}
+				
+				/*
 				survey.find("label").each(function(i2 : Int, element2 : js.html.Node)
 				{
 					var label = new JQuery(element2);
 					label.prev().off("click").on("click", function(event : Event)
 					{
-						var checked = label.prev().is(':checked');
-						context.api.voteForSurvey.call([surveyName, label.attr("for").substring("surveyItem-".length), checked], function(result : Bool)
-						{
-							label.prev().attr("checked", Std.string(checked));
-							label.next().attr("value", Std.parseInt(label.next().attr("value")) + (if(checked) 1 else -1));
-							if(Std.parseInt(label.next().attr("value")) > Std.parseInt(label.next().attr("max")))
-							{
-								label.parent().find("progress").attr("max", Std.parseInt(label.next().attr("max"))+1);
-							}
-						});
 					});
 				});
-			}
-
-			var widgets = new JQuery("#widgets");
-
-			surveys.each(function(i : Int, element : js.html.Node)
-			{
-				widgets.append("<div class=\"surveyWidget\" name=\""+new JQuery(element).attr("name")+"\"></div>");
-				var surveyHTML = new JQuery(widgets[0].lastChild);
-				new JQuery(element).find("label").each(function(i2 : Int, element2 : js.html.Node)
-				{
-					var voteName = new JQuery(element2).html();
-					surveyHTML.append("<div class=\"vote\"><input id=\"surveyItem-"+voteName+"\" type=\"checkbox\" name=\""+voteName+"\"/><label for=\"surveyItem-"+voteName+"\">"+voteName+"</label><progress value=\"5\" max=\"15\"></progress></div>");
-				});
-				loadSurveyData(surveyHTML);
+				*/
 			});
-		}
+		});
 	}
 
 	public function linkCallback(event : Event)

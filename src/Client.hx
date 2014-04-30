@@ -148,7 +148,6 @@ class Client
 				{
 					var index = Lambda.indexOf(result.itemsName, item);
 
-					trace(user.id != null);
 					surveyHTML.append("<tr class=\"vote\">"+
 						(user.id != null ? "<td><input id=\"surveyItem-"+item+"\" type=\"checkbox\" name=\""+item+"\"" + (result.userVotes[index] ? "checked=\"true\"" : "") + "\" /></td>" : "")+
 						"<td><label for=\"surveyItem-"+item+"\">"+item+"</label></td>

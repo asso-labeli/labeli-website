@@ -166,12 +166,16 @@ class Api
 
 	public function leaveGroup(groupId : Int) : Bool
 	{
+		if(!user.logged)
+			throw "You don't have rights to do this";
 		GroupUser.manager.select($gid == groupId && $user == user).delete();
 		return true;
 	}
 
 	public function joinGroup(groupId : Int) : Bool
 	{
+		if(!user.logged)
+			throw "You don't have rights to do this";
 		if(GroupUser.manager.select($gid == groupId && $user == user) == null)
 			new GroupUser(Group.manager.get(groupId), user, "Membre", false).insert();
 		return true;

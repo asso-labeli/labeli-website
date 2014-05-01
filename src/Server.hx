@@ -7,6 +7,11 @@ class ServerTools
 	{
 	}
 
+	public function isLogged(user : Dynamic)
+	{
+		return user.id != null && user.id > 0;
+	}
+
 	public function getTypeString(group : Dynamic) : String
 	{
 		if (group.type == 1)

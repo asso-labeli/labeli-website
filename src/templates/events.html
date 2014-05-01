@@ -5,17 +5,19 @@
 		<div id="widgets"></div>
 	</section>
 
-	<section class="center">
-		::if group.isUserIn::
-			::if group.isUserAdmin::
-				Vous êtes administrateur de cet évènement<a class="button" id="editGroupLink">Éditer l'évènement</a>
+	::if tools.isLogged(currentUser)::
+		<section class="center">
+			::if group.isUserIn::
+				::if group.isUserAdmin::
+					Vous êtes administrateur de cet évènement<a class="button" id="editGroupLink">Éditer l'évènement</a>
+				::else::
+					Vous participez à cet évènement<a class="button" id="leaveGroupLink">Me retirer de cet évènement</a>
+				::end::
 			::else::
-				Vous participez à cet évènement<a class="button" id="leaveGroupLink">Me retirer de cet évènement</a>
+				Vous ne participez pas à cet évènement<a class="button" id="joinGroupLink">Participer à cet évènement</a>
 			::end::
-		::else::
-			Vous ne participez pas à cet évènement<a class="button" id="joinGroupLink">Participer à cet évènement</a>
-		::end::
-	</section>
+		</section>
+	::end::
 	
 	::if tools.isAdmin(currentUser)::
 		<section>

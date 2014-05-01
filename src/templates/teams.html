@@ -5,17 +5,19 @@
 		<div id="widgets"></div>
 	</section>
 
-	<section class="center">
-		::if group.isUserIn::
-			::if group.isUserAdmin::
-				Vous êtes administrateur de cette équipe<a class="button" id="editGroupLink">Éditer l'équipe</a>
+	::if tools.isLogged(currentUser)::
+		<section class="center">
+			::if group.isUserIn::
+				::if group.isUserAdmin::
+					Vous êtes administrateur de cette équipe<a class="button" id="editGroupLink">Éditer l'équipe</a>
+				::else::
+					Vous participez à cette équipe<a class="button" id="leaveGroupLink">Me retirer de cette équipe</a>
+				::end::
 			::else::
-				Vous participez à cette équipe<a class="button" id="leaveGroupLink">Me retirer de cette équipe</a>
+				Vous ne participez pas à cette équipe<a class="button" id="joinGroupLink">Participer à cette équipe</a>
 			::end::
-		::else::
-			Vous ne participez pas à cette équipe<a class="button" id="joinGroupLink">Participer à cette équipe</a>
-		::end::
-	</section>
+		</section>
+	::end::
 	
 	::if tools.isAdmin(currentUser)::
 		<section>

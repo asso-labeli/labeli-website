@@ -129,7 +129,7 @@ class Server
 	}
 	public function doIndex(dispatch : Dispatch)
 	{
-		var data = {tools : tools, currentUser : api.getCurrentUser(), projects : api.getProjects(), events : api.getEvents()};
+		var data = {tools : tools, currentUser : api.getCurrentUser(), projects : api.getProjects(), events : api.getEvents(), houseOpened : api.isHouseOpened()};
 		result = new templo.Loader("index.html").execute(data);
 	}
 	public function doLogin(dispatch : Dispatch)

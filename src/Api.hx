@@ -490,4 +490,22 @@ class Api
 		sys.io.File.saveContent("files/newsletter.html", mailContent);
 		return true;
 	}
+
+	public function isHouseOpened() : Bool
+	{
+		return sys.FileSystem.exists(".houseOpened");
+	}
+
+	public function setHouseOpened(opened : Bool) : Bool
+	{
+		if(!user.isAdmin())
+			throw "You don't have rights to do this";
+
+		if(opened)
+			sys.io.File.saveContent(".houseOpened", "house is opened");
+		else
+			sys.FileSystem.deleteFile(".houseOpened");
+
+		return true;
+	}
 }

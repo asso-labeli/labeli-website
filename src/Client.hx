@@ -85,6 +85,9 @@ class Client
 		new JQuery("#mailSend").off("click").on("click", sendMailCallback);
 		new JQuery("#mailPreview").off("click").on("click", previewMailCallback);
 		new JQuery("#mailPreviewSection").hide();
+		new JQuery("#closeHouse").off("click").on("click", closeHouseCallback);
+		new JQuery("#openHouse").off("click").on("click", openHouseCallback);
+
 
 		var chatBox = new JQuery(".chatBox");
 		var messageTime = 0;
@@ -595,7 +598,8 @@ class Client
 
 	private function reloadURL()
 	{
-		loadURL(js.Browser.document.location.pathname);		
+		trace(js.Browser.document.location.pathname);
+		loadURL(js.Browser.document.location.pathname);
 	}
 
 	public function uploadFile(input : js.html.InputElement, callback : JqXHR -> Void)
@@ -660,6 +664,17 @@ class Client
 				iframe.contentDocument.location.reload();
 			}
 		});
+	}
 
+	public function closeHouseCallback(event : Event)
+	{
+		syncContext.api.setHouseOpened.call([false]);
+		reloadURL();
+	}
+
+	public function openHouseCallback(event : Event)
+	{
+		syncContext.api.setHouseOpened.call([true]);
+		reloadURL();
 	}
 }

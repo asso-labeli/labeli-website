@@ -23,6 +23,7 @@ class User extends sys.db.Object
 		firstName = "";
 		lastName = "";
 		passwordHash = "";
+		privateKey = "";
 		created = Date.now();
 		type = VISITOR;
 		universityGroup = "";
@@ -85,6 +86,7 @@ class User extends sys.db.Object
 	public var lastName : String;
 	public var email : String;
 	public var passwordHash : String;
+	public var privateKey : String;
 	public var universityGroup : String;
 	public var description : String;
 	public var role : String;

@@ -73,7 +73,7 @@ class Server
 			do404(new Dispatch(Web.getURI().substring(tools.getRoot().length), Web.getParams()));
 		}
 
-		if(Web.getParams().get("template") == "false")
+		if(Web.getClientHeader("WithoutTemplate") == "true")
 			includeTemplate = false;
 
 		if(includeTemplate)
@@ -141,6 +141,11 @@ class Server
 	{
 		var data = {tools : tools, currentUser : api.getCurrentUser()};
 		result = new templo.Loader("login.html").execute(data);
+	}
+	public function doResetPassword(dispatch : Dispatch)
+	{
+		var data = {tools : tools, currentUser : api.getCurrentUser(), reset : Web.getParams().exists("username") && Web.getParams().exists("key"), username : Web.getParams().get("username"), key : Web.getParams().get("key")};
+		result = new templo.Loader("resetPassword.html").execute(data);
 	}
 	public function doMessages(dispatch : Dispatch)
 	{

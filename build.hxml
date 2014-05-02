@@ -14,8 +14,10 @@
 -cmd "temploc2 -cp src/templates -output www/templates -php --compact votes.html"
 -cmd "temploc2 -cp src/templates -output www/templates -php --compact messages.html"
 -cmd "temploc2 -cp src/templates -output www/templates -php --compact api.html"
+-cmd "temploc2 -cp src/templates -output www/templates -php --compact resetPassword.html"
 -cmd "temploc2 -cp src/templates -output www/templates -php --compact mails/format.html"
 -cmd "temploc2 -cp src/templates -output www/templates -php --compact mails/register.html"
+-cmd "temploc2 -cp src/templates -output www/templates -php --compact mails/reset.html"
 
 --next
 

@@ -81,6 +81,8 @@ class Client
 		new JQuery("#deleteGroupLink").off("click").on("click", deleteGroupCallback);
 
 		new JQuery("#editUser").off("click").on("click", editUserCallback);
+		new JQuery("#askResetPassword").off("click").on("click", askResetPasswordCallback);
+		new JQuery("#resetPassword").off("click").on("click", resetPasswordCallback);
 
 		new JQuery("#mailSend").off("click").on("click", sendMailCallback);
 		new JQuery("#mailPreview").off("click").on("click", previewMailCallback);
@@ -583,7 +585,8 @@ class Client
 		js.Browser.window.history.pushState({}, "Label[i]", url);
 		JQueryStatic.ajax(
 			{
-				url : url+"?template=false",
+				url : url,
+				headers : {"WithoutTemplate" : "true"},
 				success : function(result : String)
 				{
 					new JQuery("#loading").animate({opacity : 0}, 250);
@@ -675,5 +678,33 @@ class Client
 	{
 		syncContext.api.setHouseOpened.call([true]);
 		reloadURL();
+	}
+
+	public function askResetPasswordCallback(event : Event)
+	{
+		var email = new JQuery("#email").val();
+		if(syncContext.api.askResetPassword.call([email]))
+			new JQuery(event.target).after("<div class=\"message success\">Un email vous a été envoyé contenant la procédure à suivre.</div>");
+		else
+			new JQuery(event.target).after("<div class=\"message error\">Cet email ne correspond à aucun utilisateur.</div>").next().delay(3000).fadeOut(250);
+	}
+
+	public function resetPasswordCallback(event : Event)
+	{
+
+		var username = new JQuery("#username").val();
+		var key = new JQuery("#key").val();
+		var password = new JQuery("#password").val();
+		var confirmPassword = new JQuery("#confirmPassword").val();
+
+		if(password != confirmPassword)
+			new JQuery(event.target).after("<div class=\"message error\">Les mots de passe ne correspondent pas.</div>").next().delay(3000).fadeOut(250);
+		else
+		{
+			if(syncContext.api.resetPassword.call([username, key, password]))
+				new JQuery(event.target).after("<div class=\"message success\">Votre mot de passe à été redéfini avec succès.</div>");
+			else
+				new JQuery(event.target).after("<div class=\"message error\">Votre mot de passe n'a pas pu être redéfini.</div>").next().delay(3000).fadeOut(250);
+		}
 	}
 }

@@ -81,10 +81,15 @@ class Api
 				for(i in 0...16)
 					password += String.fromCharCode(65+Std.random(90-65));
 
+			var privateKey = "";
+				for(i in 0...64)
+					privateKey += String.fromCharCode(65+Std.random(90-65));
+
 			newUser.username = new String(newUser.firstName+"."+newUser.lastName).toLowerCase();
 			newUser.created = Date.now();
 			newUser.author = user;
 			newUser.passwordHash = User.encodePassword(password);
+			newUser.privateKey = User.encodePassword(privateKey);
 			newUser.type = User.USER;
 			newUser.role = "Membre";
 			newUser.insert();
@@ -497,5 +502,50 @@ class Api
 		sys.FileSystem.createDirectory("files");
 		sys.io.File.saveContent("files/newsletter.html", mailContent);
 		return true;
+	}
+
+	public function isHouseOpened() : Bool
+	{
+		return sys.FileSystem.exists(".houseOpened");
+	}
+
+	public function setHouseOpened(opened : Bool) : Bool
+	{
+		if(!user.isAdmin())
+			throw "You don't have rights to do this";
+
+		if(opened)
+			sys.io.File.saveContent(".houseOpened", "house is opened");
+		else
+			sys.FileSystem.deleteFile(".houseOpened");
+
+		return true;
+	}
+
+	public function askResetPassword(email : String) : Bool
+	{	
+		var user = User.manager.select($email == email);
+		if(user != null)
+		{
+			var mail = new mail.FormattedMail("Identifiants");
+			mail.sender = {name : "Contact - Label[i]", email : "contact@labeli.org"};
+			mail.recipients.push({name : user.firstName+" "+user.lastName, email : user.email});
+			mail.subject = "Label[i] - Identifiants";
+			mail.content = new templo.Loader("mails/reset.html").execute({user : user});
+			return mail.send();
+		}
+		return false;
+	}
+
+	public function resetPassword(username : String, key : String, password : String) : Bool
+	{
+		var user = User.manager.select($username == username && $privateKey == key);
+		if(user != null)
+		{
+			user.passwordHash = User.encodePassword(password);
+			user.update();
+			return true;
+		}
+		return false;
 	}
 }

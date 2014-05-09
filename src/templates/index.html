@@ -30,3 +30,16 @@
 
 	<div class="more"><a href="::tools.getRoot()::events">Voir tous les évènements</a></div>
 </section>
+<section class="center">Le local de l'association est 
+::if houseOpened::
+	<span class="green">Ouvert</span>
+	::if tools.isAdmin(currentUser)::
+		<div class="button" id="closeHouse">Fermer le local</div>
+	::end::
+::else::
+	<span class="red">Fermé</span>
+	::if tools.isAdmin(currentUser)::
+		<div class="button" id="openHouse">Ouvrir le local</div>
+	::end::
+::end::
+</section>

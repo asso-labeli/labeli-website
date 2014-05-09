@@ -66,7 +66,7 @@ class Server
 
 		try
 		{
-			Dispatch.run(Web.getURI().substring(tools.getRoot().length), Web.getParams(), this);
+			Dispatch.run(StringTools.urlDecode(Web.getURI().substring(tools.getRoot().length)), Web.getParams(), this);
 		}
 		catch(error : DispatchError)
 		{

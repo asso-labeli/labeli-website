@@ -176,6 +176,7 @@ class Api
 	{
 		if(!user.logged)
 			throw "You don't have rights to do this";
+
 		if(GroupUser.manager.select($gid == groupId && $user == user) == null)
 			new GroupUser(Group.manager.get(groupId), user, "Membre", false).insert();
 		return true;
@@ -246,6 +247,9 @@ class Api
 	
 	public function submitVote(groupId : Int, value : Int)
 	{
+		if(!user.logged)
+			throw "You don't have rights to do this";
+			
 		if(value != -1 && value != 0 && value != 1)
 			return false;
 

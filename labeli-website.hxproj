@@ -1,0 +1,53 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<project version="2">
+  <!-- Output SWF options -->
+  <output>
+    <movie outputType="Application" />
+    <movie input="" />
+    <movie path="www" />
+    <movie fps="0" />
+    <movie width="0" />
+    <movie height="0" />
+    <movie version="1" />
+    <movie minorVersion="0" />
+    <movie platform="PHP" />
+    <movie background="#FFFFFF" />
+  </output>
+  <!-- Other classes to be compiled into your SWF -->
+  <classpaths>
+    <class path="src" />
+  </classpaths>
+  <!-- Build options -->
+  <build>
+    <option directives="" />
+    <option flashStrict="False" />
+    <option noInlineOnDebug="False" />
+    <option mainClass="Server" />
+    <option enabledebug="False" />
+    <option additional="# www&#xA;-lib templo&#xA;-cmd temploc2 -cp src/templates -output www/templates -php --compact global.html&#xA;-cmd temploc2 -cp src/templates -output www/templates -php --compact events.html&#xA;-cmd temploc2 -cp src/templates -output www/templates -php --compact index.html&#xA;-cmd temploc2 -cp src/templates -output www/templates -php --compact login.html&#xA;-cmd temploc2 -cp src/templates -output www/templates -php --compact presentation.html&#xA;-cmd temploc2 -cp src/templates -output www/templates -php --compact projects.html&#xA;-cmd temploc2 -cp src/templates -output www/templates -php --compact teams.html&#xA;-cmd temploc2 -cp src/templates -output www/templates -php --compact users.html&#xA;-cmd temploc2 -cp src/templates -output www/templates -php --compact votes.html&#xA;-cmd temploc2 -cp src/templates -output www/templates -php --compact messages.html&#xA;-cmd temploc2 -cp src/templates -output www/templates -php --compact api.html&#xA;-cmd temploc2 -cp src/templates -output www/templates -php --compact mails/format.html&#xA;-cmd temploc2 -cp src/templates -output www/templates -php --compact mails/register.html&#xA;-cmd temploc2 -cp src/templates -output www/templates -php --compact mails/reset.html&#xA;&#xA;--next&#xA;&#xA;# Client&#xA;-cp src&#xA;-main Client&#xA;-lib jQueryExtern&#xA;--macro jQuery.haxe.Config.setVersion('1.10.2')&#xA;--macro jQuery.haxe.Config.setNative('jQuery')&#xA;-js www/scripts/main.js" />
+  </build>
+  <!-- haxelib libraries -->
+  <haxelib>
+    <!-- example: <library name="..." /> -->
+  </haxelib>
+  <!-- Class files to compile (other referenced classes will automatically be included) -->
+  <compileTargets>
+    <!-- example: <compile path="..." /> -->
+  </compileTargets>
+  <!-- Paths to exclude from the Project Explorer tree -->
+  <hiddenPaths>
+    <hidden path="obj" />
+  </hiddenPaths>
+  <!-- Executed before build -->
+  <preBuildCommand />
+  <!-- Executed after build -->
+  <postBuildCommand alwaysRun="False" />
+  <!-- Other project options -->
+  <options>
+    <option showHiddenPaths="False" />
+    <option testMovie="Custom" />
+    <option testMovieCommand="http://localhost/index.php" />
+  </options>
+  <!-- Plugin storage -->
+  <storage />
+</project>

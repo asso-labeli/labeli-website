@@ -248,4 +248,11 @@ class Server
 
 		Sys.print("files/"+api.getCurrentUser().id+"/"+filename);
 	}
+	
+	public function doEdt(dispatch : Dispatch)
+	{
+		var data : Dynamic;
+		data = {tools : tools, currentUser : api.getCurrentUser(), group : api.getProject(42), users : api.getUsers()};
+		result = new templo.Loader("projects.html").execute(data);
+	}
 }

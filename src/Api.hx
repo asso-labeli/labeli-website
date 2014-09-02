@@ -303,7 +303,7 @@ class Api
 
 	public function getEvents()
 	{
-		return Group.toArray(Group.manager.search($status == Group.VALID && $type == Group.EVENT));
+		return Group.toArray(Group.manager.search($status == Group.VALID && $type == Group.EVENT, {orderBy : -date}));
 	}
 
 	public function getEvent(eventId : Int)
@@ -344,7 +344,7 @@ class Api
 	
 	public function getProjects()
 	{
-		return Group.toArray(Group.manager.search($status == Group.VALID && $type == Group.PROJECT));
+		return Group.toArray(Group.manager.search($status == Group.VALID && $type == Group.PROJECT, {orderBy : -created}));
 	}
 
 	public function getProject(projectId : Int)
@@ -370,7 +370,7 @@ class Api
 	
 	public function getTeams()
 	{
-		return Group.toArray(Group.manager.search($status == Group.VALID && $type == Group.TEAM));
+		return Group.toArray(Group.manager.search($status == Group.VALID && $type == Group.TEAM, {orderBy : -created}));
 	}
 
 	public function getTeam(teamId : Int)

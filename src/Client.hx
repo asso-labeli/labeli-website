@@ -637,7 +637,6 @@ class Client
 
 		context.api.sendMail.call([title, content, recipientId, preformat, sendAsAdmin], function(result : Bool)
 		{
-			trace(result);
 			js.Lib.alert("Message envoyé.");
 		});
 

@@ -7,44 +7,58 @@
 	
 	<script>
 		Polymer({
-			root : "/labeli-website2/",
+			root : "/labeli-website/",
 			go : function(url, params)
 			{
 				switch(url)
 				{
 				case "" :
+				case "home" :
 				case "index" :
-					console.log("ok");
 					document.querySelector("core-animated-pages").selected = 0;
-					history.pushState({}, '', '/');
+					document.querySelector("labeli-header").tab = 0;
+					history.pushState({}, '', this.root);
 					break;
-	
+						
+				case "presentation" :
+					document.querySelector("labeli-header").tab = 1;
+					break;
+						
 				case "projects" :
-					document.querySelector("core-animated-pages").selected = 1;
-					history.pushState({}, '', '/projects');
+					document.querySelector("core-animated-pages").selected = 2;
+					document.querySelector("labeli-header").tab = 2;
+					history.pushState({}, '', this.root+'/projects');
 					break;
 	
 				case "events" :
-					document.querySelector("core-animated-pages").selected = 2;
-					history.pushState({}, '', '/events');
+					document.querySelector("core-animated-pages").selected = 3;
+					document.querySelector("labeli-header").tab = 3;
+					history.pushState({}, '', this.root+'/events');
 					break;
 				
 				case "project" :
-					document.querySelector("core-animated-pages").selected = 3;
-					history.pushState({id: params.id}, '', this.root + "projects/" + params.id);
+					document.querySelector("core-animated-pages").selected = 4;
+					document.querySelector("labeli-header").tab = 2;
+					history.pushState({id: params.id}, '', this.root+"projects/" + params.id);
 					break;
 					
 				case "event" :
-					document.querySelector("core-animated-pages").selected = 4;
-					history.pushState({id: params.id}, '', 'events/'+params.id);
+					document.querySelector("core-animated-pages").selected = 5;
+					document.querySelector("labeli-header").tab = 3;
+					history.pushState({id: params.id}, '', this.root+'events/'+params.id);
 					break;
+						
+				default :
+					console.log("unknown route : "+url);
 				}
 			},
 			ready : function()
 			{
+				var root = this.root; 
+				var go = this.go;
   				window.onpopstate = function(event)
   				{
-					this.go(window.location.pathname.substring(this.root.length));
+					go(window.location.pathname.substring(root.length));
 				};
 				window.router = this;
 			}

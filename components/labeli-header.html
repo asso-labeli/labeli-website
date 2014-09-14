@@ -56,12 +56,11 @@
 			<flat-user></flat-user>
 -->
 		<div id="wrapper">
-			<paper-tabs noink selected="0">
-				<paper-tab>Label[i]</paper-tab>
-				<paper-tab>L'association</paper-tab>
-				<paper-tab>Projets</paper-tab>
-				<paper-tab>Événements</paper-tab>
-				<paper-tab>Équipes</paper-tab>
+			<paper-tabs id="tabs" noink selected="0">
+				<paper-tab on-click="{{goToHome}}">Label[i]</paper-tab>
+				<paper-tab on-click="{{goToPresentation}}">L'association</paper-tab>
+				<paper-tab on-click="{{goToProjects}}">Projets</paper-tab>
+				<paper-tab on-click="{{goToEvents}}">Événements</paper-tab>
 				<paper-tab>user</paper-tab>
 			</paper-tabs>
 		</div>
@@ -69,6 +68,27 @@
 	
 	<script>
 		Polymer({
+			tab : 0,
+			tabChanged : function()
+			{
+				this.$.tabs.selected = this.tab;
+			},
+			goToHome : function()
+			{
+				router.go("", {});
+			},
+			goToPresentation : function()
+			{
+				router.go("presentation", {});
+			},
+			goToProjects : function()
+			{
+				router.go("projects", {});
+			},
+			goToEvents : function()
+			{
+				router.go("events", {});
+			},
 		});
 	</script>
 </polymer-element>

@@ -1,5 +1,5 @@
 <link rel="import" href="../bower_components/polymer/polymer.html">
-<polymer-element name="labeli-event">
+<polymer-element name="labeli-event" on-click="{{click}}">
 	<template>
 		<style>
 			:host
@@ -20,6 +20,21 @@
 				background-color: #232323;
 				border : 2px solid #232323;
 				color : #ffecb3;
+			}
+			:host([big])
+			{
+				max-width: 1000px;
+				margin : 10px auto;
+			}
+			:host([big]) #description
+			{
+				padding : 10px;
+				display : block;
+			}
+			#description
+			{
+				display : none;
+				color : white;
 			}
 			h2
 			{
@@ -60,7 +75,7 @@
 				var event = document.querySelector("#section-event labeli-event");
 				event.event = this.event;
 
-				router.go("event", {id : this.project.id});
+				router.go("event", {id : this.event.id});
 			},
 			eventChanged : function()
 			{

@@ -61,7 +61,12 @@ class Client
 	public function makeLinks()
 	{
 		new JQuery("#navUser").next().hide();
-		new JQuery("a").off("click").on("click", linkCallback);
+		new JQuery("a").each(function(index, value)
+		{
+			var link = new JQuery(value);
+			if(link.attr("href") != null && link.attr("href").substring(0,7) != "http://" && link.attr("href").substring(0,8) != "https://")
+				link.off("click").on("click", linkCallback);
+		});
 		new JQuery("#login-form").off("submit").on("submit", loginCallback);
 		new JQuery("#logout-link").off("submit").on("click", logoutCallback);
 		new JQuery("#navUser").off("click").on("click", function(){new JQuery("#navUser").next().toggle();});
@@ -639,7 +644,6 @@ class Client
 		{
 			js.Lib.alert("Message envoyé.");
 		});
-
 	}
 
 	public function previewMailCallback(event : Event)

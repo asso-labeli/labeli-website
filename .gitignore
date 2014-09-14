@@ -1,5 +1,1 @@
-www/lib
-www/scripts
-www/templates/*
-www/index.php
-src/config.json
+bower_components/

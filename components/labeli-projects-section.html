@@ -1,0 +1,63 @@
+<link rel="import" href="../bower_components/polymer/polymer.html">
+<polymer-element name="labeli-projects-section">
+	<template>
+		<style>
+			:host
+			{
+				display : block;
+				max-width: 1000px;
+				margin : auto;
+			}
+			labeli-project
+			{
+				opacity : 0;
+				position : relative;
+				top : -15px;
+			}
+			h1
+			{
+				font-family : Convergence, sans-serif;
+				margin-left : 15px;
+			}
+			core-icon.big
+			{
+				width : 32px;
+				height : 32px;
+				position : relative;
+				top : -2px;
+				margin-right : 5px;
+			}
+		</style>
+		
+		<h1><core-icon icon="archive" class="big"></core-icon>Projets récents</h1>
+		<div id="projects" layout horizontal wrap></div>
+	</template>
+	
+	<script>
+		Polymer({
+			publish :
+			{
+				count : -1,
+			},
+			projects : [],
+			domReady : function()
+			{
+				var root = this;
+				labeli.async.getProjects(function(projects)
+				{
+					root.projects = (root.count == -1) ? projects : projects.slice(0, root.count);
+				});
+			},
+			projectsChanged : function()
+			{
+				for(var i = 0; i < this.projects.length; ++i)
+				{
+					var element = document.createElement("labeli-project");
+					element.project = this.projects[i];
+					this.$.projects.appendChild(element);
+					$(element).delay(i * 150).animate({opacity : 1, top : 0}, 250);
+				}
+			}
+		});
+	</script>
+</polymer-element>

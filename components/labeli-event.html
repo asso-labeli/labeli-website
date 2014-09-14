@@ -1,0 +1,71 @@
+<link rel="import" href="../bower_components/polymer/polymer.html">
+<polymer-element name="labeli-event">
+	<template>
+		<style>
+			:host
+			{
+				display : block;
+				margin : 1px;
+				background-color: #ffb74d;
+				color : #803700;
+				flex-grow : 1;
+				flex-shrink : 0;
+				flex-basis : 200px;
+				box-sizing: border-box;
+				overflow: hidden;
+				cursor : pointer;
+				border : 2px solid #ffb74d;
+				
+				
+				background-color: #232323;
+				border : 2px solid #232323;
+				color : #ffecb3;
+			}
+			h2
+			{
+				font-size : 1em;
+				white-space: nowrap;
+				overflow: hidden;
+				margin : 3px 0px;
+			}
+			#imgbox
+			{
+				height : 100px;
+				overflow : hidden;
+				background-size: cover;
+			}
+			.info
+			{
+				border-bottom : 5px solid #ffd740;
+				padding : 10px;
+				padding-bottom : 5px;
+				margin-bottom : 0px;
+			}
+		</style>
+		
+		<div id="imgbox" style="background-image : url('http://labeli.org/{{event.picture}}')"></div>
+		
+		<div class="info">
+			<h2>{{event.name}}</h2>
+			Par <author>{{event.author.firstName}} {{event.author.lastName}}</author>
+			<desrciption id="description"></desrciption>
+		</div>
+	</template>
+	
+	<script>
+		Polymer({
+			event : {},
+			click : function()
+			{
+				var event = document.querySelector("#section-event labeli-event");
+				event.event = this.event;
+
+				router.go("event", {id : this.project.id});
+			},
+			eventChanged : function()
+			{
+				this.$.description.innerHTML = this.event.description;
+			},
+		});
+	</script>
+</polymer-element>

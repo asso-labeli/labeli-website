@@ -1,0 +1,22 @@
+{
+  "name": "labeli-website",
+  "version": "5.0",
+  "homepage": "https://github.com/eolhing/labeli-website",
+  "authors": [
+    "Alix Fumoleau <alix.fumoleau@gmail.com>"
+  ],
+  "license": "MIT",
+  "private": true,
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components",
+    "test",
+    "tests"
+  ],
+  "dependencies": {
+    "core-animated-pages": "Polymer/core-animated-pages#~0.4.0",
+    "jquery": "~2.1.1",
+    "paper-tabs": "Polymer/paper-tabs#~0.4.0"
+  }
+}

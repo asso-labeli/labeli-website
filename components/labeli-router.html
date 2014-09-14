@@ -1,0 +1,53 @@
+<link rel="import" href="../bower_components/polymer/polymer.html">
+<polymer-element name="labeli-router">
+	<template>
+		<style>
+		</style>
+	</template>
+	
+	<script>
+		Polymer({
+			root : "/labeli-website2/",
+			go : function(url, params)
+			{
+				switch(url)
+				{
+				case "" :
+				case "index" :
+					console.log("ok");
+					document.querySelector("core-animated-pages").selected = 0;
+					history.pushState({}, '', '/');
+					break;
+	
+				case "projects" :
+					document.querySelector("core-animated-pages").selected = 1;
+					history.pushState({}, '', '/projects');
+					break;
+	
+				case "events" :
+					document.querySelector("core-animated-pages").selected = 2;
+					history.pushState({}, '', '/events');
+					break;
+				
+				case "project" :
+					document.querySelector("core-animated-pages").selected = 3;
+					history.pushState({id: params.id}, '', this.root + "projects/" + params.id);
+					break;
+					
+				case "event" :
+					document.querySelector("core-animated-pages").selected = 4;
+					history.pushState({id: params.id}, '', 'events/'+params.id);
+					break;
+				}
+			},
+			ready : function()
+			{
+  				window.onpopstate = function(event)
+  				{
+					this.go(window.location.pathname.substring(this.root.length));
+				};
+				window.router = this;
+			}
+		});
+	</script>
+</polymer-element>

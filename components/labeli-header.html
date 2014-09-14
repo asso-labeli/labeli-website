@@ -1,0 +1,74 @@
+<link rel="import" href="../bower_components/polymer/polymer.html">
+<polymer-element name="labeli-header">
+	<template>
+		<style>
+			:host
+			{
+				display : block;
+				background-color: rgba(0,0,0,0.85);
+				font-family : Convergence, sans-serif;
+				text-transform:uppercase;
+			}
+			#wrapper
+			{
+				max-width : 1000px;
+				margin : auto;
+			}
+			paper-tab
+			{
+				padding : 10px;
+				font-size : 1.5em;
+				text-decoration: none;
+				color : white;
+				text-shadow : 0px 2px 0px black;
+				border-bottom: 3px solid rgba(0,128,255,0.0);
+				transition : all 0.2s linear;
+				cursor : pointer;
+			}
+			paper-tabs::shadow #selectionBar
+			{
+				height: 5px;
+				background-color : #0080FF;
+			}
+			paper-tabs[selected="1"]::shadow #selectionBar
+			{
+				background-color : #FF8000;
+			}
+			a:hover
+			{
+				border-bottom: 3px solid rgba(0,128,255,1.0);
+			}
+			core-icon
+			{
+				color : red;
+			}
+		</style>
+<!--
+		
+			<a href="">Label[i]</a>
+			<nav>
+				<a href=""></a>
+				<a href="">Projets</a>
+				<a href="">Événements</a>
+				<a href="">Équipes</a>
+			</nav>
+
+			<flat-user></flat-user>
+-->
+		<div id="wrapper">
+			<paper-tabs noink selected="0">
+				<paper-tab>Label[i]</paper-tab>
+				<paper-tab>L'association</paper-tab>
+				<paper-tab>Projets</paper-tab>
+				<paper-tab>Événements</paper-tab>
+				<paper-tab>Équipes</paper-tab>
+				<paper-tab>user</paper-tab>
+			</paper-tabs>
+		</div>
+	</template>
+	
+	<script>
+		Polymer({
+		});
+	</script>
+</polymer-element>

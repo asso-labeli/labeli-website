@@ -1,0 +1,99 @@
+<link rel="import" href="../bower_components/polymer/polymer.html">
+<polymer-element name="labeli-presentation">
+	<template>
+		<style>
+			:host
+			{
+				display : block;
+				max-width : 1000px;
+				margin : 0px auto;
+			}
+			h1
+			{
+				font-size : 1.75em;
+				flex-basis : 300px;
+				flex-shrink : 0;
+				flex-grow : 1;
+				text-align : right;
+				margin : 10px;
+			}
+			.part1, .part2, .part3, .part4
+			{
+				margin : 10px;
+				text-align : justify;
+				flex-basis : 300px;
+				flex-shrink : 0;
+				flex-grow : 1;
+			}
+			google-map
+			{
+				flex-grow : 1;
+				flex-shrink : 1;
+				margin : 10px;
+			}
+			h2
+			{
+				margin-top : 0px;
+			}
+			.bold
+			{
+				font-weight: bold;
+			}
+			core-icon
+			{
+				width : 30px;
+				height : 30px;
+				position : relative;
+				top : -2px;
+			}
+			.price
+			{
+				background-color : rgba(0,0,0,0.25);
+				margin : 10px;
+				padding : 10px;
+				font-size : 1.5em;
+				text-align : center;
+				width : 200px;
+			}
+		</style>
+		<div>
+			<div layout vertical>
+				<div layout horizontal center wrap style="margin : 35px 0px;">
+					<h1>Label[i] : L'association<br />étudiante d'informatique<br />de l'Université de Bordeaux</h1>
+					<div class="part1">Notre association a pour but de <span class="bold">réunir</span> tous les étudiants en informatique présents à l'université. En leur proposant un cadre pour <span class="bold">réaliser</span> leurs projets et ainsi leur donner de meilleures chances pour leur vie après les études. Nous leur proposons aussi différentes activités annexes à <span class="bold">découvrir</span> entre ou après les cours.</div>
+				</div>
+
+				<div layout horizontal reverse center wrap style="margin : 35px 0px;">
+					<div class="part2">
+						<h2><core-icon icon="home"></core-icon> Le local de l'association</h2>
+						Notre local se trouve dans le <span class="bold">bâtiment A29</span> (rez-de-chaussée, sur la droite du bâtiment). Au coeur des bâtiments dédiés à l'informatique (LaBRI, Cremi).<br /><br />
+						Il est ouvert tous les midis et souvent pendant les cours et le soir (suivant les disponibilités du bureau). Avant de vous y rendre vous pouvez vérifier si le local est ouvert à partir de ce site.<br /><br />
+						En tant que membre de l'association, vous pouvez venir y manger, travailler, jouer et rencontrer les autres membres ! Vous pouvez également acheter à boire et à manger (canettes de soda, café, gâteaux).<br />
+					</div>
+					<google-map id="map" mapType="hybrid" showCenterMarker latitude="44.807930" longitude="-0.596389" style="display : block; width : 450px; height : 350px;" zoom="18"></google-map>
+				</div>
+
+				<div layout horizontal center wrap style="margin : 35px 0px;" stretch>
+					<div class="part3">
+						<h1><core-icon icon="favorite"></core-icon> Rejoindre l'association</h1>
+						Si vous êtes étudiant vous pouvez devenir membre de l'association, vous aurez ainsi accès au local, à la partie utilisateur du site web, aux projets et aux évènement Label[i], ainsi que tout ce qui est organisé par l'association.<br />
+					</div>
+					<div class="part4" horizontal layout self-stretch>
+						<div class="price" vertical layout center-justified>Étudiant<br /><span style="font-size : 1.5em;">8€</span>à l'année</div>
+						<div class="price" vertical layout center-justified>Étudiant L1<br /><span style="font-size : 1.5em;">4€</span>à l'année</div>
+					</div>
+				</div>
+			</div>
+		</div>
+	</template>
+	
+	<script>
+		Polymer({
+			refreshMap : function()
+			{
+				this.$.map.resize();
+			}
+			
+		});
+	</script>
+</polymer-element>

@@ -8,63 +8,125 @@
 	<script>
 		Polymer({
 			url : "",
-			root : "/labeli-website/",
-			go : function(url, params)
+			root : "/labeli/website/",
+			go : function(url, params, pushState)
 			{
-				console.log("route : "+this.url+" - "+url);
-				if(this.url != url)
+				pushState = (pushState == undefined) ? true : pushState;					
+				switch(url)
 				{
-					this.url = url;
-					switch(url)
-					{
-					case "" :
-					case "home" :
-					case "index" :
-						document.querySelector("core-animated-pages").selected = 0;
-						document.querySelector("labeli-header").tab = 0;
+				case "" :
+				case "home" :
+				case "index" :
+					document.querySelector("core-animated-pages").selected = 0;
+					document.querySelector("labeli-header").tab = 0;
+					if(pushState)
 						history.pushState({}, '', this.root);
-						break;
+					break;
 
-					case "presentation" :
-						document.querySelector("labeli-header").tab = 1;
-						break;
+				case "presentation" :
+					document.querySelector("core-animated-pages").selected = 1;
+					document.querySelector("labeli-header").tab = 1;
+					if(pushState)
+						history.pushState({}, '', this.root+'presentation');
+					setTimeout(function(){document.querySelector("#section-presentation").refreshMap();},250);
+					break;
+					
+				case "users" :
+					document.querySelector("core-animated-pages").selected = 2;
+					document.querySelector("labeli-header").tab = 2;
+					if(pushState)
+						history.pushState({}, '', this.root+'users');
+					break;
 
-					case "projects" :
-						document.querySelector("core-animated-pages").selected = 2;
-						document.querySelector("labeli-header").tab = 2;
+				case "projects" :
+					document.querySelector("core-animated-pages").selected = 3;
+					document.querySelector("labeli-header").tab = 3;
+					if(pushState)
 						history.pushState({}, '', this.root+'projects');
-						break;
+					break;
 
-					case "events" :
-						document.querySelector("core-animated-pages").selected = 3;
-						document.querySelector("labeli-header").tab = 3;
+				case "events" :
+					document.querySelector("core-animated-pages").selected = 4;
+					document.querySelector("labeli-header").tab = 4;
+					if(pushState)
 						history.pushState({}, '', this.root+'events');
-						break;
+					break;
 
-					case "project" :
-						document.querySelector("core-animated-pages").selected = 4;
-						document.querySelector("labeli-header").tab = 2;
+				case "user" :
+					document.querySelector("core-animated-pages").selected = 5;
+					document.querySelector("labeli-header").tab = 2;
+					if(pushState)
 						history.pushState({id: params.id}, '', this.root+"projects/" + params.id);
-						break;
+					break;
 
-					case "event" :
-						document.querySelector("core-animated-pages").selected = 5;
-						document.querySelector("labeli-header").tab = 3;
+				case "project" :
+					document.querySelector("core-animated-pages").selected = 6;
+					document.querySelector("labeli-header").tab = 3;
+					if(pushState)
+						history.pushState({id: params.id}, '', this.root+"projects/" + params.id);
+					break;
+
+				case "event" :
+					document.querySelector("core-animated-pages").selected = 7;
+					document.querySelector("labeli-header").tab = 4;
+					if(pushState)
 						history.pushState({id: params.id}, '', this.root+'events/'+params.id);
-						break;
+					break;
+					
+				case "login" : 
+					document.querySelector("core-animated-pages").selected = 8;
+					document.querySelector("labeli-header").tab = 5;
+					if(pushState)
+						history.pushState({}, '', this.root+'login');
+					break;
 
-					default :
-						console.log("unknown route : "+url);
-					}
+				default :
+					console.log("unknown route : "+url);
 				}
+			},
+			goFromUrl : function()
+			{
+				var route = window.location.pathname.substring(this.root.length);
+				var params = {};
+
+				if(route.substring(0,9) == "projects/")
+				{
+					params = {id : parseInt(route.substring(9))};
+					route = "project";
+					var project = document.querySelector("#section-project labeli-project");
+					project.loadId = params.id;
+				}
+				else if(route.substring(0,7) == "events/")
+				{
+					params = {id : parseInt(route.substring(7))};
+					route = "event";
+					
+					var event = document.querySelector("#section-event labeli-event");
+					event.loadId = params.id;
+				}
+				else if(route.substring(0,7) == "users/")
+				{
+					params = {id : parseInt(route.substring(6))};
+					route = "user";
+					
+					var event = document.querySelector("#section-user labeli-user");
+					user.loadId = params.id;
+				}
+
+				this.go(route, params, false);
 			},
 			ready : function()
 			{
 				var router = this;
   				window.onpopstate = function(event)
   				{
-					router.go(window.location.pathname.substring(router.root.length));
+  					router.goFromUrl();
 				};
+				window.onload = function()
+				{
+					router.goFromUrl();
+				};
+				
 				window.router = this;
 			}
 		});

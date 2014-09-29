@@ -2,22 +2,27 @@
 <html>
 	<head>
 		<meta name="viewport" content="width=device-width, minimum-scale=1.0, initial-scale=1.0, user-scalable=yes" />
-  		<script src="/labeli-website/bower_components/platform/platform.js"></script>
-  		<script src="/labeli-website/bower_components/jquery/dist/jquery.js"></script>
-  		<script src="/labeli-website/components/labeli.js"></script>
+  		<script src="/labeli/website/bower_components/platform/platform.js"></script>
+  		<script src="/labeli/website/bower_components/jquery/dist/jquery.js"></script>
+  		<script src="/labeli/website/components/labeli.js"></script>
   		
-  		<link rel="import" href="/labeli-website/bower_components/paper-tabs/paper-tabs.html" />
-  		<link rel="import" href="/labeli-website/bower_components/core-icon/core-icon.html" />
-		<link rel="import" href="/labeli-website/bower_components/core-icons/core-icons.html" />
-		<link rel="import" href="/labeli-website/bower_components/core-icons/maps-icons.html" />
-  		<link rel="import" href="/labeli-website/bower_components/core-animated-pages/core-animated-pages.html" />
+  		<link rel="import" href="/labeli/website/bower_components/paper-tabs/paper-tabs.html" />
+  		<link rel="import" href="/labeli/website/bower_components/core-icon/core-icon.html" />
+		<link rel="import" href="/labeli/website/bower_components/core-icons/core-icons.html" />
+		<link rel="import" href="/labeli/website/bower_components/core-icons/maps-icons.html" />
+  		<link rel="import" href="/labeli/website/bower_components/core-animated-pages/core-animated-pages.html" />
+  		<link rel="import" href="/labeli/website/bower_components/google-map/google-map.html" />
   		
-  		<link rel="import" href="/labeli-website/components/labeli-router.html" />
-  		<link rel="import" href="/labeli-website/components/labeli-header.html" />
-  		<link rel="import" href="/labeli-website/components/labeli-project.html" />
-  		<link rel="import" href="/labeli-website/components/labeli-event.html" />
-  		<link rel="import" href="/labeli-website/components/labeli-projects-section.html" />
-  		<link rel="import" href="/labeli-website/components/labeli-events-section.html" />
+  		<link rel="import" href="/labeli/website/components/labeli-router.html" />
+  		<link rel="import" href="/labeli/website/components/labeli-header.html" />
+  		<link rel="import" href="/labeli/website/components/labeli-presentation.html" />
+  		<link rel="import" href="/labeli/website/components/labeli-user.html" />
+  		<link rel="import" href="/labeli/website/components/labeli-project.html" />
+  		<link rel="import" href="/labeli/website/components/labeli-event.html" />
+  		<link rel="import" href="/labeli/website/components/labeli-projects-section.html" />
+  		<link rel="import" href="/labeli/website/components/labeli-events-section.html" />
+  		<link rel="import" href="/labeli/website/components/labeli-users-section.html" />
+  		<link rel="import" href="/labeli/website/components/labeli-login.html" />
   		
   		<link href='http://fonts.googleapis.com/css?family=Convergence|Cantarell:400,700' rel='stylesheet' type='text/css' />
 	</head>
@@ -32,21 +37,14 @@
 					<labeli-events-section count="4" cross-fade></labeli-events-section>
 					<labeli-house-status cross-fade></labeli-house-status>
 				</section>
-				<section>
-					<labeli-presentation cross-fade></labeli-presentation>
-				</section>
-				<section>
-					<labeli-projects-section cross-fade></labeli-projects-section>
-				</section>
-				<section>
-					<labeli-events-section cross-fade></labeli-events-section>
-				</section>
-				<section id="section-project">
-					<labeli-project big cross-fade></labeli-project>
-				</section>
-				<section id="section-event">
-					<labeli-event big cross-fade></labeli-event>
-				</section>
+				<section><labeli-presentation cross-fade id="section-presentation"></labeli-presentation></section>
+				<section><labeli-users-section cross-fade></labeli-users-section></section>
+				<section><labeli-projects-section cross-fade></labeli-projects-section></section>
+				<section><labeli-events-section cross-fade></labeli-events-section></section>
+				<section id="section-user"><labeli-user cross-fade></labeli-user></section>
+				<section id="section-project"><labeli-project big cross-fade></labeli-project></section>
+				<section id="section-event"><labeli-event big cross-fade></labeli-event></section>
+				<section id="section-event"><labeli-login big cross-fade></labeli-login></section>
 			</core-animated-pages>
 		</div>
 		

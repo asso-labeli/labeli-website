@@ -1,0 +1,53 @@
+<link rel="import" href="../bower_components/polymer/polymer.html">
+<polymer-element name="labeli-login">
+	<template>
+		<style>
+			:host
+			{
+				display : block;
+				max-width: 1000px;
+				margin : 20px auto;
+			}
+			input
+			{
+				font-size : 1.2em;
+				padding : 10px;
+				margin : 10px;
+			}
+			input[type="checkbox"]
+			{
+				position : relative;
+				top : 0em;
+				width : 1em;
+				height : 1em;
+			}
+		</style>
+		
+		<form layout vertical on-submit="{{submitForm}}">
+			<label for="username">Identifiant</label>
+			<input type="text" name="username" id="username" />
+			<label for="password">Mot de passe</label>
+			<input type="password" name="password" id="password" />
+			<div layout horizontal center>
+				<input type="checkbox" name="keep" id="keep" value="keep" />
+				<label for="keep">Rester connecté</label>
+			</div>
+			<input type="submit" name="submit" value="Connexion"/>
+		</form>
+	
+	</template>
+	
+	<script>
+		Polymer({
+			submitForm : function(event)
+			{
+				event.preventDefault();
+				
+				var username = this.$.username.value;
+				var password = this.$.password.value;
+				var keep = this.$.keep.checked;
+				console.log(username+", "+password+", "+keep);
+			}
+		});
+	</script>
+</polymer-element>

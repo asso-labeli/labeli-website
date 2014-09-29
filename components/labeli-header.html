@@ -43,25 +43,14 @@
 				color : red;
 			}
 		</style>
-<!--
-		
-			<a href="">Label[i]</a>
-			<nav>
-				<a href=""></a>
-				<a href="">Projets</a>
-				<a href="">Événements</a>
-				<a href="">Équipes</a>
-			</nav>
-
-			<flat-user></flat-user>
--->
 		<div id="wrapper">
 			<paper-tabs id="tabs" noink selected="0">
 				<paper-tab on-click="{{goToHome}}">Label[i]</paper-tab>
 				<paper-tab on-click="{{goToPresentation}}">L'association</paper-tab>
+				<paper-tab on-click="{{goToUsers}}">Membres</paper-tab>
 				<paper-tab on-click="{{goToProjects}}">Projets</paper-tab>
 				<paper-tab on-click="{{goToEvents}}">Événements</paper-tab>
-				<paper-tab>user</paper-tab>
+				<paper-tab on-click="{{goToLogin}}"><labeli-user loginBox></labeli-user></paper-tab>
 			</paper-tabs>
 		</div>
 	</template>
@@ -81,6 +70,10 @@
 			{
 				router.go("presentation", {});
 			},
+			goToUsers : function()
+			{
+				router.go("users", {});
+			},
 			goToProjects : function()
 			{
 				router.go("projects", {});
@@ -89,6 +82,10 @@
 			{
 				router.go("events", {});
 			},
+			goToLogin : function()
+			{
+				router.go("login", {});
+			}
 		});
 	</script>
 </polymer-element>

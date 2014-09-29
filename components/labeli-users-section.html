@@ -1,5 +1,5 @@
 <link rel="import" href="../bower_components/polymer/polymer.html">
-<polymer-element name="labeli-projects-section">
+<polymer-element name="labeli-users-section">
 	<template>
 		<style>
 			:host
@@ -8,7 +8,7 @@
 				max-width: 1000px;
 				margin : auto;
 			}
-			labeli-project
+			labeli-user
 			{
 				opacity : 0;
 				position : relative;
@@ -29,8 +29,8 @@
 			}
 		</style>
 		
-		<h1><core-icon icon="archive" class="big"></core-icon>Projets</h1>
-		<div id="projects" layout horizontal wrap></div>
+		<h1><core-icon icon="account-circle" class="big"></core-icon>Membres</h1>
+		<div id="users" layout horizontal wrap></div>
 	</template>
 	
 	<script>
@@ -39,23 +39,23 @@
 			{
 				count : -1,
 			},
-			projects : [],
+			users : [],
 			domReady : function()
 			{
 				var root = this;
-				labeli.async.getProjects(function(projects)
+				labeli.async.getUsers(function(users)
 				{
-					root.projects = (root.count == -1) ? projects : projects.slice(0, root.count);
+					root.users = (root.count == -1) ? users : users.slice(0, root.count);
 				});
 			},
-			projectsChanged : function()
+			usersChanged : function()
 			{
-				for(var i = 0; i < this.projects.length; ++i)
+				for(var i = 0; i < this.users.length; ++i)
 				{
-					var element = document.createElement("labeli-project");
-					element.project = this.projects[i];
-					this.$.projects.appendChild(element);
-					$(element).delay(i * 150).animate({opacity : 1, top : 0}, 250);
+					var element = document.createElement("labeli-user");
+					element.user = this.users[i];
+					this.$.users.appendChild(element);
+					$(element).delay(i * 50).animate({opacity : 1, top : 0}, 250);
 				}
 			}
 		});

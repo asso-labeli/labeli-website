@@ -1,4 +1,3 @@
 RewriteEngine On
-RewriteBase /labeli-website/
-RewriteRule labeli.js labeli.js
+RewriteBase /labeli/website/
 RewriteRule (.*) index.html [L,QSA]

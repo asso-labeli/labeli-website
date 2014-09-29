@@ -6,7 +6,7 @@
 			{
 				display : block;
 				/*box-shadow : 0px 1px 3px rgba(0,0,0,0.2);*/
-				margin : 1px;
+				margin : 4px;
 				flex-grow : 1;
 				flex-shrink : 0;
 				flex-basis : 240px;
@@ -72,11 +72,11 @@
 	
 	<script>
 		Polymer({
-			project : {},
 			publish : 
 			{
 				big : false,
 			},
+			project : {},
 			projectChanged : function()
 			{
 				this.$.description.innerHTML = this.project.description;
@@ -87,6 +87,15 @@
 				project.project = this.project;
 
 				router.go("project", {id : this.project.id});
+			},
+			loadId : null,
+			loadIdChanged : function()
+			{
+				var projectElement = this;
+				labeli.async.getProject(this.loadId, function(project)
+				{
+					projectElement.project = project;
+				});
 			}
 		});
 	</script>

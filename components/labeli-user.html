@@ -61,7 +61,7 @@
 		
 		<template bind if="{{loginBox}}">
 			<template bind if="{{!user}}">
-				<div on-click="{{goToLogin}}">Connexion</div>
+				Connexion
 			</template>
 			<template bind if="{{user}}">
 				test : {{user.id}}
@@ -112,10 +112,10 @@
 					userElement.user = user;
 				});
 			},
-			goToLogin : function()
+			onClick : function()
 			{
-				console.log("test");
-				router.go("login", {});
+				if(this.user == null)
+					router.go("login", {});
 			}
 		});
 	</script>

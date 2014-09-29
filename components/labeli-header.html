@@ -50,7 +50,7 @@
 				<paper-tab on-click="{{goToUsers}}">Membres</paper-tab>
 				<paper-tab on-click="{{goToProjects}}">Projets</paper-tab>
 				<paper-tab on-click="{{goToEvents}}">Événements</paper-tab>
-				<paper-tab on-click="{{goToLogin}}"><labeli-user loginBox></labeli-user></paper-tab>
+				<paper-tab on-click="{{goToLogin}}"><labeli-user loginBox id="loginBox"></labeli-user></paper-tab>
 			</paper-tabs>
 		</div>
 	</template>
@@ -84,7 +84,7 @@
 			},
 			goToLogin : function()
 			{
-				router.go("login", {});
+				this.$.loginBox.onClick();
 			}
 		});
 	</script>

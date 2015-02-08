@@ -1,0 +1,27 @@
+{
+  "name": "labeli-website",
+  "version": "0.1.0",
+  "description": "labeli-website\r ==============",
+  "main": "server.js",
+  "dependencies": {
+    "connect": "^3.3.4",
+    "express": "^4.11.1",
+    "gith": "^1.0.4",
+    "serve-static": "^1.8.1"
+  },
+  "devDependencies": {},
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "node server.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://eolhing@github.com/eolhing/labeli-website.git"
+  },
+  "author": "Alix Fumoleau <alix.fumoleau@gmail.com>",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/eolhing/labeli-website/issues"
+  },
+  "homepage": "https://github.com/eolhing/labeli-website"
+}

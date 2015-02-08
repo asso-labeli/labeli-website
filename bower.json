@@ -1,0 +1,50 @@
+{
+  "name": "labeli-website",
+  "version": "0.1",
+  "authors": [
+    "Alix Fumoleau <alix.fumoleau@gmail.com>"
+  ],
+  "main": "index.html",
+  "license": "MIT",
+  "homepage": "http://www.labeli.org",
+  "private": true,
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components",
+    "test",
+    "tests"
+  ],
+  "dependencies": {
+    "core-ajax": "Polymer/core-ajax#~0.5.4",
+    "core-animated-pages": "Polymer/core-animated-pages#~0.5.4",
+    "core-dropdown-menu": "Polymer/core-dropdown-menu#~0.5.4",
+    "core-image": "Polymer/core-image#~0.5.4",
+    "core-overlay": "Polymer/core-overlay#~0.5.4",
+    "google-map": "GoogleWebComponents/google-map#~0.4.1",
+    "ajax-form": "~1.5.2",
+    "app-router": "~2.4.0",
+    "core-a11y-keys": "Polymer/core-a11y-keys#~0.5.4",
+    "core-collapse": "Polymer/core-collapse#~0.5.4",
+    "core-component-page": "Polymer/core-component-page#~0.5.4",
+    "core-dropdown": "Polymer/core-dropdown#~0.5.4",
+    "core-focusable": "Polymer/core-focusable#~0.5.4",
+    "core-icon": "Polymer/core-icon#~0.5.4",
+    "core-icon-button": "Polymer/core-icon-button#~0.5.4",
+    "core-icons": "Polymer/core-icons#~0.5.4",
+    "core-iconset": "Polymer/core-iconset#~0.5.4",
+    "core-iconset-svg": "Polymer/core-iconset-svg#~0.5.4",
+    "core-item": "Polymer/core-item#~0.5.4",
+    "core-menu": "Polymer/core-menu#~0.5.4",
+    "core-meta": "Polymer/core-meta#~0.5.4",
+    "core-resizable": "Polymer/core-resizable#~0.5.4",
+    "core-selection": "Polymer/core-selection#~0.5.4",
+    "core-selector": "Polymer/core-selector#~0.5.4",
+    "core-shared-lib": "Polymer/core-shared-lib#~0.5.4",
+    "core-style": "Polymer/core-style#~0.5.4",
+    "core-transition": "Polymer/core-transition#~0.5.4",
+    "google-apis": "GoogleWebComponents/google-apis#~0.4.3",
+    "polymer": "~0.5.4",
+    "webcomponentsjs": "~0.5.4"
+  }
+}

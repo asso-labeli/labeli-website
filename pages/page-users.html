@@ -1,0 +1,127 @@
+<link rel="import" href="/bower_components/polymer/polymer.html">
+
+<polymer-element name="page-users" layout vertical>
+    <template>
+        <link rel="stylesheet" href="../style.css" />
+        <style>
+            a
+            {
+                text-decoration : none;
+                display : block;
+                margin : 10px;
+            }
+            labeli-user
+            {
+                background-color : white;
+                padding : 10px;
+                box-shadow : 0px 1px 5px rgba(0,0,0,0.33);
+                border-radius: 3px;
+                box-sizing: border-box;
+                width : 19%;
+                cursor : pointer;
+                color : black;
+            }
+            #searchBox
+            {
+                margin-bottom : 10px;
+                font-size : 1.2em;
+            }
+            #searchBox core-icon
+            {
+                width : 2em;
+                height : 2em;
+            }
+            #createUser
+            {
+                border-radius: 3px;
+                background-color: white;
+                padding : 30px;
+            }
+        </style>
+           <div id="actionBar" layout horizontal center>
+                <h1 flex>Les Membres</h1>
+                <template bind if={{userIsAdmin}}>
+                    <div class="button" on-click="{{openCreateUserOverlay}}"><core-icon icon='add'></core-icon>Ajouter un membre</div>
+                </template>
+           </div>
+            
+            <div id="searchBox" layout horizontal center>
+                <core-icon icon='search'></core-icon>
+                <input flex type="search" value="{{filter}}" autofocus placeholder="Rechercher parmi les membres" />
+            </div>
+            
+            <div id="userList" layout horizontal wrap>
+                <template repeat="{{u in usersDisplayed}}">
+                    <a is="html5-history-anchor" href="/users/{{u.username}}"><labeli-user>{{u.firstName}} {{u.lastName}}</labeli-user></a>
+                </template>
+            </div>
+
+
+            <core-overlay id="createUserOverlay" backdrop>
+               <div id="createUser" layour vertical>
+                   <core-icon icon="close" core-overlay-toggle class="closeIcon"></core-icon>
+                    <h2>Créer un nouveau membre</h2>
+                    <form id="form" is="ajax-form" cookies action="http://localhost:8080/users" method="post" on-submitting={{userCreatedStart}} on-submitted={{userCreatedEnd}} layour vertical stretch>
+                        <div class="field" layout horizontal center><label flex>Prénom</label><input type="text" name="firstName"></div>
+                        <div class="field" layout horizontal center><label flex>Nom</label><input type="text" name="lastName"></div>
+                        <div class="field" layout horizontal center><label flex>Email</label><input type="text" name="email"></div>
+                        <button type="submit" id="progress" is="labeli-button" icon="check" text="Valider" successText="Utilisateur ajouté" loadingText="Extinction du PC"></button>
+                    </form>
+               </div>
+            </core-overlay>
+    </template>
+    
+    <script>
+        Polymer({
+            usersList : [],
+            usersDisplayed : [],
+            filter : "",
+            userAlreadyCreate : false,
+            userIsAdmin : false,
+            ready : function()
+            {
+                var element = this;
+                function setRights()
+                {
+                    if(window.app.currentUser != null)
+                        element.userIsAdmin = true;
+                }
+                Object.observe(window.app, setRights);
+                setRights();
+                
+                $.ajax({type: 'GET', url: 'http://localhost:8080/users',
+                    success: function(result)
+                    {
+                        element.usersList = result;
+                        element.usersDisplayed = result;
+                    },
+                    xhrFields: {withCredentials: true}
+                });
+            },
+            filterChanged : function(oldValue, newValue)
+            {
+                this.usersDisplayed = [];
+                for(var i = 0; i < this.usersList.length; ++i)
+                    if(this.usersList[i].firstName.toUpperCase().indexOf(newValue.toUpperCase()) > -1 ||
+                       this.usersList[i].lastName.toUpperCase().indexOf(newValue.toUpperCase()) > -1)
+                        this.usersDisplayed.push(this.usersList[i]);
+            },
+            openCreateUserOverlay : function()
+            {
+                this.$.createUserOverlay.opened = true;
+            },
+            userCreatedStart : function(event)
+            {
+                if(!this.userAlreadyCreated)
+                {
+                    this.userAlreadyCreated = true;
+                    this.$.progress.loading();
+                }
+            },
+            userCreatedEnd : function(event)
+            {
+                this.$.progress.success();
+            }
+        });
+    </script>
+</polymer-element>

@@ -1,0 +1,155 @@
+<link rel="import" href="/bower_components/polymer/polymer.html">
+
+<polymer-element name="page-projects" layout vertical>
+    <template>
+        <link rel="stylesheet" href="../style.css" />
+        <style>
+            a
+            {
+                text-decoration : none;
+                display : block;
+                margin : 10px;
+            }
+            labeli-project
+            {
+                background-color : white;
+                padding : 10px;
+                box-shadow : 0px 1px 5px rgba(0,0,0,0.33);
+                border-radius: 3px;
+                box-sizing: border-box;
+                width : 19%;
+                cursor : pointer;
+                color : black;
+            }
+            #searchBox
+            {
+                margin-bottom : 10px;
+                font-size : 1.2em;
+            }
+            #searchBox core-icon
+            {
+                width : 2em;
+                height : 2em;
+            }
+            #createProject
+            {
+                border-radius: 3px;
+                background-color: white;
+                padding : 30px;
+            }
+            core-dropdown-menu
+            {
+                font-size : 1em;
+                padding : 10px;
+                margin : 10px;
+                border : 1px solid #A9A9A9;
+                cursor : pointer;
+            }
+            core-dropdown
+            {
+                border : 1px solid #A9A9A9;
+            }
+            core-item
+            {
+                padding : 0px 20px;
+            }
+        </style>
+           <div id="actionBar" layout horizontal center>
+                <h1 flex>Les Projets</h1>
+                <template bind if={{userIsAdmin}}>
+                    <div class="button" on-click="{{openCreateProjectOverlay}}"><core-icon icon='add'></core-icon>Ajouter un projet</div>
+                </template>
+           </div>
+            
+            <div id="searchBox" layout horizontal center>
+                <core-icon icon='search'></core-icon>
+                <input flex type="search" value="{{filter}}" autofocus placeholder="Rechercher parmi les projets" />
+            </div>
+            
+            <div id="projectList" layout horizontal wrap>
+                <template repeat="{{u in projectsDisplayed}}">
+                    <a is="html5-history-anchor" href="/projects/{{u.idstring}}"><labeli-project>{{u.name}}</labeli-project></a>
+                </template>
+            </div>
+
+            <core-overlay id="createProjectOverlay" backdrop>
+               <div id="createProject" layour vertical>
+                   <core-icon icon="close" core-overlay-toggle class="closeIcon"></core-icon>
+                    <h2>Créer un nouveau projet</h2>
+                    <form id="form" is="ajax-form" cookies action="http://localhost:8070/projects" method="post" on-submitting={{projectCreatedStart}} on-submitted={{projectCreatedEnd}} layour vertical stretch>
+                        <div class="field" layout horizontal center><label flex>Nom</label><input type="text" name="name"></div>
+                        <div class="field" layout horizontal center><label flex>Type</label>
+                            <core-dropdown-menu label="Type de projet" id="typeSelect">
+                                <core-dropdown class="dropdown">
+                                    <core-selector>
+                                      <core-item label="Application" icon="apps"></core-item>
+                                      <core-item label="Evénement" icon="event"></core-item>
+                                      <core-item label="Equipe" icon="social:group"></core-item>
+                                      <core-item label="Matériel" icon="hardware:memory"></core-item>
+                                      <core-item label="Pédagogie" icon="social:school"></core-item>
+                                      <core-item label="Divers" icon="group-work"></core-item>
+                                    </core-selector>
+                                </core-dropdown>
+                            </core-dropdown-menu>
+                        </div>
+                        <button type="submit" id="progress" is="labeli-button" icon="check" text="Valider" successText="Utilisateur ajouté" loadingText="Extinction du PC"></button>
+                    </form>
+               </div>
+            </core-overlay>
+    </template>
+    
+    <script>
+        Polymer({
+            projectsList : [],
+            projectsDisplayed : [],
+            filter : "",
+            projectAlreadyCreated : false,
+            userIsAdmin : false,
+            ready : function()
+            {
+                var element = this;
+                function setRights()
+                {
+                    if(window.app.currentUser != null)
+                        element.userIsAdmin = true;
+                }
+                Object.observe(window.app, setRights);
+                setRights();
+                
+                $.ajax({type: 'GET', url: 'http://localhost:8080/projects',
+                    success: function(result)
+                    {
+                        element.projectsList = result;
+                        element.projectsDisplayed = result;
+                    },
+                    xhrFields: {withCredentials: true}
+                });
+            },
+            filterChanged : function(oldValue, newValue)
+            {
+                this.projectsDisplayed = [];
+                for(var i = 0; i < this.projectsList.length; ++i)
+                    if(this.projectsList[i].firstName.toUpperCase().indexOf(newValue.toUpperCase()) > -1 ||
+                       this.projectsList[i].lastName.toUpperCase().indexOf(newValue.toUpperCase()) > -1)
+                        this.projectsDisplayed.push(this.projectsList[i]);
+            },
+            openCreateProjectOverlay : function()
+            {
+                this.$.createProjectOverlay.opened = true;
+            },
+            projectCreatedStart : function(event)
+            {
+                event.detail.formData.type = this.$.typeSelect.selectedItemLabel;
+                if(!this.projectAlreadyCreated)
+                {
+                    this.projectAlreadyCreated = true;
+                    this.$.progress.loading();
+                }
+            },
+            projectCreatedEnd : function(event)
+            {
+                this.$.progress.success();
+            }
+        });
+    </script>
+</polymer-element>

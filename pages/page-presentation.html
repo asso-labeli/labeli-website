@@ -1,0 +1,82 @@
+
+
+
+<link rel="import" href="/bower_components/polymer/polymer.html">
+
+<polymer-element name="page-presentation">
+    <template>
+        <link rel="stylesheet" href="../style.css" />
+        <style>
+            section
+            {
+                background-color: white;
+                box-shadow : 0px 1px 5px rgba(0,0,0,0.33);
+                margin : 20px 10px;
+                border-radius : 3px;
+                padding : 20px;
+                text-align: justify;
+                overflow:hidden;
+            }
+            .bold
+            {
+                font-weight : bold;
+            }
+            h1, h2
+            {
+                margin-top : 0px;
+            }
+            google-map
+            {
+                margin-top : 10px;
+                margin-left : -20px;
+                margin-left : -20px;
+                margin-right : -20px;
+                margin-bottom : -20px;
+                display : block;
+                width : calc(100% + 40px);
+                height : 300px;
+            }
+            .price
+            {
+                border-radius : 3px;
+                background-color : rgba(0,0,0,0.1);
+                padding : 5px;
+                margin : 5px;
+            }
+        </style>
+        <div layout vertical>
+            <section>
+                <h1 vertical layout center>
+                    <img src="/images/logo-transparent.png" alt="Label[i]" />
+                    <span>L'asso étudiante d'informatique de l'Université de Bordeaux</span>
+                </h1>
+                <div>Notre association a pour but de <span class="bold">réunir</span> tous les étudiants en informatique présents à l'université. En leur proposant un cadre pour <span class="bold">réaliser</span> leurs projets et ainsi leur donner de meilleures chances pour leur vie après les études. Nous leur proposons aussi différentes activités annexes à <span class="bold">découvrir</span> entre ou après les cours.</div>
+            </section>
+
+            <section>
+                <div>
+                    <h2><core-icon icon="home"></core-icon> Le local de l'association</h2>
+                    Notre local se trouve dans le <span class="bold">bâtiment A29</span> (rez-de-chaussée, sur la droite du bâtiment). Au coeur des bâtiments dédiés à l'informatique (LaBRI, Cremi).<br /><br />
+                    Il est ouvert tous les midis et souvent pendant les cours et le soir (suivant les disponibilités du bureau). Avant de vous y rendre vous pouvez vérifier si le local est ouvert à partir de ce site.<br /><br />
+                    En tant que membre de l'association, vous pouvez venir y manger, travailler, jouer et rencontrer les autres membres ! Vous pouvez également acheter à boire et à manger (canettes de soda, café, gâteaux).<br />
+                </div>
+                <google-map id="map" mapType="hybrid" showCenterMarker latitude="44.807930" longitude="-0.596389" zoom="18"></google-map>
+            </section>
+
+            <section layout vertical>
+                <div>
+                    <h1><core-icon icon="favorite"></core-icon> Rejoindre l'association</h1>
+                    Si vous êtes étudiant vous pouvez devenir membre de l'association, vous aurez ainsi accès au local, à la partie utilisateur du site web, aux projets et aux évènement Label[i], ainsi que tout ce qui est organisé par l'association.<br />
+                </div>
+                <div horizontal layout>
+                    <div flex class="price" vertical layout center>Étudiant<br /><span style="font-size : 1.5em;">8€</span>à l'année</div>
+                    <div flex class="price" vertical layout center>Étudiant L1<br /><span style="font-size : 1.5em;">4€</span>à l'année</div>
+                </div>
+            </section>
+        </div>
+    </template>
+    <script>
+    Polymer({
+    });
+  </script>
+</polymer-element>

@@ -1,0 +1,102 @@
+*
+{
+    font-family : 'Open Sans', sans-serif;
+    font-weight: 300;
+}
+body
+{
+    margin : 0px;
+    background-color : lightgray;
+}
+header
+{
+    box-shadow : 0px 1px 5px #666;
+    background-color : #EEE;
+}
+header .content
+{
+    margin : auto;
+    max-width : 1000px;
+    display : flex;
+    align-content : stretch;
+    flex-wrap : wrap;
+}
+nav
+{
+    flex-grow : 1;
+    display : flex;
+    justify-content: flex-end;
+    align-content: center;
+    flex-wrap : wrap;
+}
+nav *, nav a
+{
+    padding : 20px 10px;
+    font-size : 1.5em;
+    text-decoration : none;
+    font-family : 'Raleway', serif;
+    font-weight: 300;
+    color : #40A0FF;
+}
+#main
+{
+    max-width: 1000px;
+    margin : auto;
+}
+h1, h2, h3
+{
+    text-decoration : none;
+    font-family : 'Raleway', serif;
+    font-weight: 300;
+}
+.closeIcon
+{
+    position : absolute;
+    right : 10px;
+    top : 10px;
+    cursor : pointer;
+}
+input[type="search"]
+{
+    font-size : 1.2em;
+    background : none;
+    border : none;
+    border-bottom : 1px solid #666;
+    padding : 10px;
+    outline : none;
+}
+input[type="text"], input[type="password"]
+{
+    font-size : 1em;
+    padding : 10px;
+    margin : 10px;
+}
+@-webkit-keyframes rotate
+{
+  from { -webkit-transform: rotate(0deg); }
+  to { -webkit-transform: rotate(360deg); }
+}
+.spin
+{
+    -webkit-animation-name:             rotate; 
+    -webkit-animation-duration:         0.5s; 
+    -webkit-animation-iteration-count:  infinite;
+    -webkit-transition-timing-function: linear;
+}
+.button, button, input[type="submit"]
+{
+    display : block;
+    margin : 10px;
+    padding : 10px;
+    color : white;
+    background-color : #0080FF;
+    box-shadow : 0px 1px 5px rgba(0,0,0,0.33);
+    border-radius: 3px;
+    font-size : 1.1em;
+    cursor : pointer;
+    border : none;
+    display : flex;
+    align-content: center;
+    outline : 0;
+    text-align: center;
+}

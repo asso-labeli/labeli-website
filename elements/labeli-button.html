@@ -1,0 +1,50 @@
+<link rel="import" href="/bower_components/polymer/polymer.html">
+
+<polymer-element name="labeli-button" extends="button">
+    <template>
+        <style>
+            core-icon
+            {
+                margin-right : 3px;
+            }
+        </style>
+        <div layout horizontal center center-justified style="width:100%;">
+            <link rel="stylesheet" href="../style.css" />
+            <core-icon id="icon" icon="{{icon}}"></core-icon><span id="text">{{text}}</span>
+        </div>
+    </template>
+    <script>
+        Polymer(
+        {
+            publish :
+            {
+                icon : "",
+                text : "",
+                loadingText : "",
+                successText : "",
+                errorText : ""
+            },
+            loading : function(event)
+            {
+                this.$.icon.icon = "refresh";
+                this.$.icon.setAttribute("class", "spin");
+                this.setAttribute("style", "background-color : #0080FF;");
+                this.$.text.innerHTML = this.loadingText;
+            },
+            success : function(event)
+            {
+                this.$.icon.icon = "check";
+                this.setAttribute("style", "background-color : limegreen;");
+                this.$.icon.setAttribute("class", "");
+                this.$.text.innerHTML = this.successText;
+            },
+            error : function(event)
+            {
+                this.$.icon.icon = "error";
+                this.setAttribute("style", "background-color : red;");
+                this.$.icon.setAttribute("class", "");
+                this.$.text.innerHTML = this.errorText;
+            }
+        });
+    </script>
+</polymer-element>

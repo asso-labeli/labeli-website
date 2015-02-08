@@ -1,0 +1,42 @@
+<link rel="import" href="/bower_components/polymer/polymer.html">
+
+<polymer-element name="page-user" layout vertical>
+    <template>
+        <link rel="stylesheet" href="../style.css" />
+        <style>
+            :host
+            {
+                background-color : white;
+                padding : 10px;
+                box-shadow : 0px 1px 5px rgba(0,0,0,0.33);
+                border-radius: 3px;
+                margin : 10px;
+                box-sizing: border-box;
+            }
+        </style>
+        <h1>{{user.firstName}} {{user.lastName}}</h1>
+        
+    </template>
+    
+    <script>
+        Polymer({
+            publish :
+            {
+            },
+            id : "",
+            user : null,
+            test : 42,
+            ready : function()
+            {
+                var element = this;
+                $.ajax({type: 'GET', url: 'http://localhost:8080/users/'+this.id, xhrFields: {withCredentials: true},
+                    success: function(result)
+                    {
+                        console.log("OK");
+                        element.user = result;
+                    }
+                });
+            }
+        });
+    </script>
+</polymer-element>

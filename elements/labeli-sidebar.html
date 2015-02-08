@@ -1,0 +1,103 @@
+<link rel="import" href="/bower_components/polymer/polymer.html">
+
+<polymer-element name="labeli-sidebar">
+    <template>
+        <link rel="stylesheet" href="../style.css" />
+        <style>
+            :host
+            {
+                position : relative;
+                border-radius : 3px;
+                background-color : #EEE;
+                box-shadow : 0px 1px 5px rgba(0,0,0,0.33);
+                margin : 20px 10px;
+                margin-top : 70px;
+                padding-top : 65px;
+                width : 20%;
+            }
+            h2
+            {
+                text-align : center;
+                margin : 0px;
+            }
+            img
+            {
+                width : 100px;
+                height: 100px;
+                border-radius : 100%;
+                position : absolute;
+                margin: 0px auto;
+                left: 0;
+                right: 0;
+                top : -50px;
+                border : 3px solid white;
+                box-shadow : 0px -1px 1px rgba(0,0,0,0.5);
+            }
+            a
+            {    
+                text-decoration : none;
+                color : #40A0FF;
+            }
+        </style>
+        <template bind if="{{show}}">
+            <template bind if="{{user == null}}" id="loginForm">
+                <form id="form" is="ajax-form" cookies method="POST" action="http://localhost:8080/auth" on-submitting={{loginStart}} on-submitted={{loginEnd}} layout vertical>
+                    <h2>Connexion</h2>
+                    <input type="text" name="username" placeholder="Identifiant" />
+                    <input type="password" name="password" placeholder="Mot de passe" />
+                    <button id="button" is="labeli-button" icon="account-box" text="Connexion" successText="Connecté" loadingText="Vérification" errorText="Identifiants invalides"></labeli-button>
+                </ajax-form>
+            </template>
+            <template bind if="{{user != null}}">
+                <div layout vertical stretch>
+                    <img src="/files/avatar.jpg" alt="">
+                    <h2>{{user.firstName}}</h2>
+                    <button id="logoutButton" is="labeli-button" text="Déconnexion" icon="close" loadingText="Déconexion" successText="Déconnecté" on-click={{logout}}></button>
+                </div>
+            </template>
+        </template>
+    </template>
+    <script>
+        Polymer(
+        {
+            show : false,
+            user : null,
+            
+            loginStart : function()
+            {
+                this.shadowRoot.querySelector("#button").loading();
+            },
+            loginEnd : function(event)
+            {
+                user = JSON.parse(event.detail.responseText);
+                if(user == null)
+                    this.shadowRoot.querySelector("#button").error();
+                else
+                {
+                    currentUser = user;
+                    this.user = user;
+                    localStorage.setItem("userId", user._id);
+                    localStorage.setItem("privateKey", user.privateKey);
+                    this.shadowRoot.querySelector("#button").success();
+                }
+            },
+            logout : function()
+            {
+                sidebar = this;
+                $.ajax({type: 'DELETE', url: 'http://localhost:8080/auth',
+                    success: function(result)
+                    {
+                        currentUser = null;
+                        sidebar.user = null;
+                        sidebar.shadowRoot.querySelector("#logoutButton").success();
+                    },
+                    xhrFields: {withCredentials: true}
+                });
+                this.shadowRoot.querySelector("#logoutButton").loading();
+            }
+        });
+    </script>
+</polymer-element>
+
+
+         

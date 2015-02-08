@@ -29,7 +29,7 @@
             ready : function()
             {
                 var element = this;
-                $.ajax({type: 'GET', url: 'http://localhost:8080/users/'+this.id, xhrFields: {withCredentials: true},
+                $.ajax({type: 'GET', url: 'http://api.labeli.org:8080/users/'+this.id, xhrFields: {withCredentials: true},
                     success: function(result)
                     {
                         console.log("OK");

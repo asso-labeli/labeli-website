@@ -116,7 +116,7 @@
                 Object.observe(window.app, setRights);
                 setRights();
                 
-                $.ajax({type: 'GET', url: 'http://localhost:8080/projects',
+                $.ajax({type: 'GET', url: 'http://api.labeli.org:8080/projects',
                     success: function(result)
                     {
                         element.projectsList = result;

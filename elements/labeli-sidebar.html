@@ -41,7 +41,7 @@
         </style>
         <template bind if="{{show}}">
             <template bind if="{{user == null}}" id="loginForm">
-                <form id="form" is="ajax-form" cookies method="POST" action="http://localhost:8080/auth" on-submitting={{loginStart}} on-submitted={{loginEnd}} layout vertical>
+                <form id="form" is="ajax-form" cookies method="POST" action="http://api.labeli.org:8080/auth" on-submitting={{loginStart}} on-submitted={{loginEnd}} layout vertical>
                     <h2>Connexion</h2>
                     <input type="text" name="username" placeholder="Identifiant" />
                     <input type="password" name="password" placeholder="Mot de passe" />
@@ -84,7 +84,7 @@
             logout : function()
             {
                 sidebar = this;
-                $.ajax({type: 'DELETE', url: 'http://localhost:8080/auth',
+                $.ajax({type: 'DELETE', url: 'http://api.labeli.org:8080/auth',
                     success: function(result)
                     {
                         currentUser = null;

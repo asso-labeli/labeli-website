@@ -61,7 +61,7 @@
         
         <script>
             window.app = {};
-            $.ajax({type: 'GET', url: 'http://localhost:8080/auth', xhrFields: { withCredentials: true },
+            $.ajax({type: 'GET', url: 'http://api.labeli.org:8080/auth', xhrFields: { withCredentials: true },
                 success: function(result)
                 {
                     window.app.currentUser = result;

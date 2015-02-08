@@ -61,7 +61,7 @@
                <div id="createUser" layour vertical>
                    <core-icon icon="close" core-overlay-toggle class="closeIcon"></core-icon>
                     <h2>Créer un nouveau membre</h2>
-                    <form id="form" is="ajax-form" cookies action="http://localhost:8080/users" method="post" on-submitting={{userCreatedStart}} on-submitted={{userCreatedEnd}} layour vertical stretch>
+                    <form id="form" is="ajax-form" cookies action="http://api.labeli.org:8080/users" method="post" on-submitting={{userCreatedStart}} on-submitted={{userCreatedEnd}} layour vertical stretch>
                         <div class="field" layout horizontal center><label flex>Prénom</label><input type="text" name="firstName"></div>
                         <div class="field" layout horizontal center><label flex>Nom</label><input type="text" name="lastName"></div>
                         <div class="field" layout horizontal center><label flex>Email</label><input type="text" name="email"></div>
@@ -89,7 +89,7 @@
                 Object.observe(window.app, setRights);
                 setRights();
                 
-                $.ajax({type: 'GET', url: 'http://localhost:8080/users',
+                $.ajax({type: 'GET', url: 'http://api.labeli.org:8080/users',
                     success: function(result)
                     {
                         element.usersList = result;

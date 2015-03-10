@@ -5,7 +5,8 @@
 
         <script src="/bower_components/webcomponentsjs/webcomponents.min.js"></script>
         <script src="https://code.jquery.com/jquery-2.1.3.min.js"></script>
-
+        <script src="https://apis.google.com/js/client.js"></script>
+        
         <link rel="stylesheet" href="/style.css" />
         <link rel="import" href="/bower_components/app-router/app-router.html">
         <link rel="import" href="/bower_components/core-animated-pages/core-animated-pages.html">
@@ -20,6 +21,7 @@
         <link rel="import" href="/bower_components/core-dropdown/core-dropdown.html">
         <link rel="import" href="/bower_components/core-item/core-item.html">
         <link rel="import" href="/bower_components/core-animated-pages/core-animated-pages.html">
+        <link rel="import" href="/bower_components/event-calendar/dist/event-calendar.html">
         <link rel="import" href="/elements/labeli-button.html">
         <link rel="import" href="/elements/labeli-sidebar.html">
         <link rel="import" href="/elements/labeli-project.html">
@@ -30,6 +32,7 @@
         <link rel="import" href="/pages/page-projects.html">
         <link rel="import" href="/pages/page-user.html">
         <link rel="import" href="/pages/page-project.html">
+        <link rel="import" href="/pages/page-calendar.html">
         <link rel="import" href="/pages/page-error404.html">
         
         <link rel="icon" type="image/png" href="/images/favicon.png" />
@@ -44,6 +47,7 @@
                     <a is="html5-history-anchor" href="/presentation">L'association</a>
                     <a is="html5-history-anchor" href="/users">Membres</a>
                     <a is="html5-history-anchor" href="/projects">Projets</a>
+<!--                    <a is="html5-history-anchor" href="/calendar">Calendrier</a>-->
                 </nav>
            </div>
         </header>
@@ -53,6 +57,7 @@
                     <app-route path="/"             element="page-home"></app-route>
                     <app-route path="/home"         element="page-home"></app-route>
                     <app-route path="/presentation" element="page-presentation"></app-route>
+                    <app-route path="/calendar" element="page-calendar"></app-route>
                     <app-route path="/users"        element="page-users"></app-route>
                     <app-route path="/projects"     element="page-projects"></app-route>
                     <app-route path="/users/:id"    element="page-user"></app-route>
@@ -64,7 +69,7 @@
         </div>
         
         <script>
-            window.app = {apiURL : "http://localhost:8080"};
+            window.app = {apiURL : "http://api.labeli.org"};
             app.api = function(type, url, params, callback)
             {
                 $.ajax({type: type.toUpperCase(), url: app.apiURL+url, success: callback, xhrFields: {withCredentials: true}});

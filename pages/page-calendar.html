@@ -1,0 +1,32 @@
+<link rel="import" href="/bower_components/polymer/polymer.html">
+
+<polymer-element name="page-calendar">
+    <template>
+        <link rel="stylesheet" href="../style.css" />
+        <style>
+            section
+            {
+                height : 500px;
+            }
+        </style>
+        <section>
+            <calendar-month id="calendar" curDate="2015-2-10" header view="month"></calendar-month>
+        </section>
+    </template>
+    
+    <script>
+        Polymer(
+        {
+            ready : function()
+            {
+    
+                this.$.calendar.events = [{
+                    start: moment("10-03-2015", "DD-MM-YYYY"),
+                    end:   moment("15-03-2015", "DD-MM-YYYY"),
+                    title: "coucou",
+                    venue: "yay"
+                }];
+            }
+        });
+    </script>
+</polymer-element>

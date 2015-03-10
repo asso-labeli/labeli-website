@@ -41,7 +41,7 @@
         </style>
         <template bind if="{{show}}">
             <template bind if="{{user == null}}" id="loginForm">
-                <form id="form" is="ajax-form" cookies method="POST" action="http://api.labeli.org:8080/auth" on-submitting={{loginStart}} on-submitted={{loginEnd}} layout vertical>
+                <form id="form" is="ajax-form" cookies method="POST" action="{{app.apiURL}}/auth" on-submitting={{loginStart}} on-submitted={{loginEnd}} layout vertical>
                     <h2>Connexion</h2>
                     <input type="text" name="username" placeholder="Identifiant" />
                     <input type="password" name="password" placeholder="Mot de passe" />
@@ -60,16 +60,21 @@
     <script>
         Polymer(
         {
+            app : null,
             show : true,
             user : null,
-            
+            ready : function()
+            {
+                this.app = window.app;
+            },
             loginStart : function()
             {
                 this.shadowRoot.querySelector("#button").loading();
             },
             loginEnd : function(event)
             {
-                user = JSON.parse(event.detail.responseText);
+                //user = JSON.parse(event.detail.responseText);
+                var user = {userId : 1, privateKey : "test", firstName : "Alix", lastName : "Fumoleau"};
                 if(user == null)
                     this.shadowRoot.querySelector("#button").error();
                 else
@@ -84,14 +89,11 @@
             logout : function()
             {
                 sidebar = this;
-                $.ajax({type: 'DELETE', url: 'http://api.labeli.org:8080/auth',
-                    success: function(result)
-                    {
+                app.api('DELETE', '/auth', [], function(result)
+                {
                         currentUser = null;
                         sidebar.user = null;
                         sidebar.shadowRoot.querySelector("#logoutButton").success();
-                    },
-                    xhrFields: {withCredentials: true}
                 });
                 this.shadowRoot.querySelector("#logoutButton").loading();
             }

@@ -45,6 +45,7 @@
     "core-transition": "Polymer/core-transition#~0.5.4",
     "google-apis": "GoogleWebComponents/google-apis#~0.4.3",
     "polymer": "~0.5.4",
-    "webcomponentsjs": "~0.5.4"
+    "webcomponentsjs": "~0.5.4",
+    "event-calendar": "~0.1.6"
   }
 }

@@ -7,19 +7,15 @@
             a
             {
                 text-decoration : none;
-                display : block;
-                margin : 10px;
             }
-            labeli-user
+            a.userLink
             {
-                background-color : white;
-                padding : 10px;
-                box-shadow : 0px 1px 5px rgba(0,0,0,0.33);
-                border-radius: 3px;
-                box-sizing: border-box;
-                width : 19%;
+                display : block;
+                width : 20%;
+                margin : 10px;
                 cursor : pointer;
-                color : black;
+                flex-grow: 1;
+                max-width : 30%;
             }
             #searchBox
             {
@@ -51,8 +47,10 @@
             </div>
             
             <div id="userList" layout horizontal wrap>
-                <template repeat="{{u in usersDisplayed}}">
-                    <a is="html5-history-anchor" href="/users/{{u.username}}"><labeli-user>{{u.firstName}} {{u.lastName}}</labeli-user></a>
+                <template bind repeat="{{u in usersDisplayed}}">
+                    <a class="userLink" is="html5-history-anchor" href="/users/{{u.username}}">
+                        <labeli-user firstName="{{u.firstName}}" lastName="{{u.lastName}}"></labeli-user>
+                    </a>
                 </template>
             </div>
 
@@ -60,7 +58,7 @@
                <div id="createUser" layour vertical>
                    <core-icon icon="close" core-overlay-toggle class="closeIcon"></core-icon>
                     <h2>Créer un nouveau membre</h2>
-                    <form id="form" is="ajax-form" cookies action="http://api.labeli.org:8080/users" method="post" on-submitting={{userCreatedStart}} on-submitted={{userCreatedEnd}} layour vertical stretch>
+                    <form id="form" is="ajax-form" cookies action="{{app.apiURL}}/users" method="post" on-submitting={{userCreatedStart}} on-submitted={{userCreatedEnd}} layour vertical stretch>
                         <div class="field" layout horizontal center><label flex>Prénom</label><input type="text" name="firstName"></div>
                         <div class="field" layout horizontal center><label flex>Nom</label><input type="text" name="lastName"></div>
                         <div class="field" layout horizontal center><label flex>Email</label><input type="text" name="email"></div>
@@ -72,6 +70,7 @@
     
     <script>
         Polymer({
+            app : null,
             usersList : [],
             usersDisplayed : [],
             filter : "",
@@ -79,6 +78,7 @@
             userIsAdmin : false,
             ready : function()
             {
+                this.app = window.app;
                 var element = this;
                 function setRights()
                 {
@@ -90,8 +90,9 @@
                 
                 app.api('get', '/users', null, function(result)
                 {
-                    element.usersList = result;
-                    element.usersDisplayed = result;
+                    element.usersList = result.data;
+                    element.usersDisplayed = result.data;
+                    console.log(result.data);
                 });
             },
             filterChanged : function(oldValue, newValue)

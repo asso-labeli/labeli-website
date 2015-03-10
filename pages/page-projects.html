@@ -116,13 +116,10 @@
                 Object.observe(window.app, setRights);
                 setRights();
                 
-                $.ajax({type: 'GET', url: 'http://api.labeli.org:8080/projects',
-                    success: function(result)
-                    {
-                        element.projectsList = result;
-                        element.projectsDisplayed = result;
-                    },
-                    xhrFields: {withCredentials: true}
+                app.api('GET', '/projects', [], function(result)
+                {
+                    element.projectsList = result;
+                    element.projectsDisplayed = result;
                 });
             },
             filterChanged : function(oldValue, newValue)

@@ -1,0 +1,83 @@
+<link rel="import" href="/bower_components/polymer/polymer.html">
+
+<polymer-element name="labeli-project">
+    <template>
+        <style>
+            :host
+            {
+                border-radius : 3px;
+                min-height: 100px;
+                margin : 10px;
+                background-image : url('/images/cubes.png');
+                overflow : hidden;
+                display : flex;
+                flex-flow: column-reverse;
+                box-shadow : 0px 1px 3px rgba(0,0,0,0.33);
+/*                border : 1px solid white;*/
+                cursor : pointer;
+                opacity : 0;
+                transition : opacity 0.33s;
+            }
+            :host([show]) {opacity : 1;}
+            :host(.app)      .info {border-top : 3px solid hsl(210, 100%, 70%);} :host(.app)      core-icon {color : hsl(210, 100%, 70%);}
+            :host(.event)    .info {border-top : 3px solid hsl( 30, 100%, 70%);} :host(.event)    core-icon {color : hsl( 30, 100%, 70%);}
+            :host(.team)     .info {border-top : 3px solid hsl(330, 100%, 70%);} :host(.team)     core-icon {color : hsl(330, 100%, 70%);}
+            :host(.hardware) .info {border-top : 3px solid hsl(150, 100%, 70%);} :host(.hardware) core-icon {color : hsl(150, 100%, 70%);}
+            :host(.learn)    .info {border-top : 3px solid hsl( 90, 100%, 70%);} :host(.learn)    core-icon {color : hsl( 90, 100%, 70%);}
+            :host(.other)    .info {border-top : 3px solid hsl(270, 100%, 80%);} :host(.other)    core-icon {color : hsl(270, 100%, 80%);}
+            .info
+            {
+                background-color : rgba(0,0,0,0.5);
+                padding : 5px;
+                color : white;
+                overflow : hidden;
+                white-space: nowrap;
+                transition : padding 0.1s;
+            }
+            :host(:hover) .info
+            {
+                padding-top : 10px;
+                padding-bottom : 10px;
+            }
+            .info *
+            {
+                flex-shrink : 0;
+            }
+            core-icon
+            {
+                margin-right : 5px;
+            }
+            .author
+            {
+                margin-left : 5px;
+                font-size : 0.8em;
+                color : lightgray;
+                overflow : hidden;
+                white-space: nowrap;
+            }
+        </style>
+        <div class="info" layout horizontal center>
+            
+            <template if="{{project.type == 'app'}}"><core-icon icon="apps"></core-icon></template>
+            <template if="{{project.type == 'event'}}"><core-icon icon="event"></core-icon></template>
+            <template if="{{project.type == 'team'}}"><core-icon icon="social:group"></core-icon></template>
+            <template if="{{project.type == 'hardware'}}"><core-icon icon="hardware:memory"></core-icon></template>
+            <template if="{{project.type == 'learn'}}"><core-icon icon="social:school"></core-icon></template>
+            <template if="{{project.type == 'other'}}"><core-icon icon="group-work"></core-icon></template>
+            <div>{{project.name}}</div><div class="author"> par {{project.author.firstName}} {{project.author.lastName}}</div>
+        </div>
+    </template>
+    <script>
+        Polymer(
+        {
+            publish :
+            {
+                project : null
+            },
+            projectChanged : function(oldValue, newValue)
+            {
+                this.className = this.className+" "+newValue.type;
+            }
+        });
+    </script>
+</polymer-element>

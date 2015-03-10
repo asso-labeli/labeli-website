@@ -56,7 +56,6 @@
                 </template>
             </div>
 
-
             <core-overlay id="createUserOverlay" backdrop>
                <div id="createUser" layour vertical>
                    <core-icon icon="close" core-overlay-toggle class="closeIcon"></core-icon>
@@ -89,13 +88,10 @@
                 Object.observe(window.app, setRights);
                 setRights();
                 
-                $.ajax({type: 'GET', url: 'http://api.labeli.org:8080/users',
-                    success: function(result)
-                    {
-                        element.usersList = result;
-                        element.usersDisplayed = result;
-                    },
-                    xhrFields: {withCredentials: true}
+                app.api('get', '/users', null, function(result)
+                {
+                    element.usersList = result;
+                    element.usersDisplayed = result;
                 });
             },
             filterChanged : function(oldValue, newValue)

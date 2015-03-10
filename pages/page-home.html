@@ -3,11 +3,111 @@
 <polymer-element name="page-home">
     <template>
         <link rel="stylesheet" href="../style.css" />
-        <p>Home !</p>
+        <style>
+            section
+            {
+                padding : 0px 10px;
+                margin-bottom : 5px;
+            }
+            h1
+            {
+                margin : 10px;
+            }
+            .project
+            {
+                flex-grow : 1;
+            }
+            .project.small
+            {
+                flex-basis : 200px;
+            }
+            .project.medium
+            {
+                flex-basis : 275px;
+            }
+            .project.big
+            {
+                flex-basis : 350px;
+            }
+            a
+            {
+                text-decoration: none;
+            }
+            labeli-project
+            {
+                opacity : 0;
+                transform: scale(0,0);
+                transition : all 0.33s;
+            }
+            labeli-project[show]
+            {
+                opacity : 1;
+                transform: scale(1,1);
+            }
+        </style>
+        <section>
+            <div layout horizontal center wrap>
+                <h1 flex>Projets Récents</h1>
+                <a is="html5-history-anchor" href="/projects">Voir tous les projets</a>
+            </div>
+        </section>
+        <div layout horizontal wrap>
+            <template repeat="{{p in projects}}">
+                <a is="html5-history-anchor" href="/projects/{{p.stringId}}" class="project {{p.rating}}"><labeli-project project={{p}}></labeli-project></a>
+            </template>
+        </div>
+        <section>
+            <div layout horizontal center wrap>
+                <h1 flex>Nouveaux Membres</h1>
+                <a is="html5-history-anchor" href="/users">Voir tous les membres</a>
+            </div>
+        </section>
+        <div layout horizontal wrap>
+            <template repeat="{{u in users}}">
+                <a is="html5-history-anchor" href="/users/{{p.username}}" class="user"><labeli-user user={{u}}></labeli-user></a>
+            </template>
+        </div>
     </template>
     <script>
         Polymer(
         {
+            projects :
+            [
+                {name : "Projet1", rating : "big", type : "event", author : {firstName : "Alix", lastName : "Fumoleau"}},
+                {name : "Projet2", rating : "big", type : "hardware", author : {firstName : "Alix", lastName : "Fumoleau"}},
+                {name : "Projet3", rating : "medium", type : "app", author : {firstName : "Alix", lastName : "Fumoleau"}},
+                {name : "Projet4", rating : "medium", type : "team", author : {firstName : "Alix", lastName : "Fumoleau"}},
+                {name : "Projet5", rating : "medium", type : "learn", author : {firstName : "Alix", lastName : "Fumoleau"}},
+                {name : "Projet6", rating : "small", type : "other", author : {firstName : "Alix", lastName : "Fumoleau"}},
+                {name : "Projet7", rating : "small", type : "event", author : {firstName : "Alix", lastName : "Fumoleau"}},
+                {name : "Projet8", rating : "small", type : "other", author : {firstName : "Alix", lastName : "Fumoleau"}}
+            ],
+            users :
+            [
+                {firstName : "Alix", lastName : "Fumoleau", username : "alix.fumoleau"},
+                {firstName : "Alix", lastName : "Fumoleau", username : "alix.fumoleau"},
+                {firstName : "Alix", lastName : "Fumoleau", username : "alix.fumoleau"},
+                {firstName : "Alix", lastName : "Fumoleau", username : "alix.fumoleau"},
+                {firstName : "Alix", lastName : "Fumoleau", username : "alix.fumoleau"},
+            ],
+            ready : function()
+            {
+                var projects = this.shadowRoot.querySelectorAll("labeli-project");
+                var min = 0;
+                var max = 5000;
+                for(var i = 0; i < projects.length; ++i)
+                {
+                    var dist = projects[i].getBoundingClientRect().top + 0.2 * projects[i].getBoundingClientRect().left;
+                    min = Math.max(min, dist);
+                    max = Math.min(max, dist);
+                }
+                for(var i = 0; i < projects.length; ++i)
+                {
+                    var dist = projects[i].getBoundingClientRect().top + 0.2 * projects[i].getBoundingClientRect().left;
+                    var factor = 1 - ((dist - min) / (max - min));
+                    setInterval(function(project){ return function() {project.setAttribute("show", true);}}(projects[i]), factor * 500);
+                }
+            }
         });
     </script>
 </polymer-element>

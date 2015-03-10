@@ -1,10 +1,12 @@
-<!DOCTYPE html><html><head>
+<!doctype html>
+<html>
+    <head>
         <title>Label[i]</title>
 
         <script src="/bower_components/webcomponentsjs/webcomponents.min.js"></script>
         <script src="https://code.jquery.com/jquery-2.1.3.min.js"></script>
 
-        <link rel="stylesheet" href="/style.css">
+        <link rel="stylesheet" href="/style.css" />
         <link rel="import" href="/bower_components/app-router/app-router.html">
         <link rel="import" href="/bower_components/core-animated-pages/core-animated-pages.html">
         <link rel="import" href="/bower_components/core-overlay/core-overlay.html">
@@ -17,7 +19,7 @@
         <link rel="import" href="/bower_components/core-dropdown-menu/core-dropdown-menu.html">
         <link rel="import" href="/bower_components/core-dropdown/core-dropdown.html">
         <link rel="import" href="/bower_components/core-item/core-item.html">
-        
+        <link rel="import" href="/bower_components/core-animated-pages/core-animated-pages.html">
         <link rel="import" href="/elements/labeli-button.html">
         <link rel="import" href="/elements/labeli-sidebar.html">
         <link rel="import" href="/elements/labeli-project.html">
@@ -30,14 +32,14 @@
         <link rel="import" href="/pages/page-project.html">
         <link rel="import" href="/pages/page-error404.html">
         
-        <link rel="icon" type="image/png" href="/images/favicon.png">
-        <link href="http://fonts.googleapis.com/css?family=Raleway:300" rel="stylesheet" type="text/css">
-        <link href="http://fonts.googleapis.com/css?family=Open+Sans:400,300" rel="stylesheet" type="text/css">
+        <link rel="icon" type="image/png" href="/images/favicon.png" />
+        <link href='http://fonts.googleapis.com/css?family=Raleway:300' rel='stylesheet' type='text/css'>
+        <link href='http://fonts.googleapis.com/css?family=Open+Sans:400,300' rel='stylesheet' type='text/css'>
     </head>
     <body>
         <header>
            <div class="content">
-               <a is="pushstate-anchor" href="/"><img src="/images/logo-transparent.png" alt="Label[i]"></a>
+               <a is="pushstate-anchor" href="/"><img src="/images/logo-transparent.png" alt="Label[i]" /></a>
                 <nav>
                     <a is="html5-history-anchor" href="/presentation">L'association</a>
                     <a is="html5-history-anchor" href="/users">Membres</a>
@@ -45,17 +47,17 @@
                 </nav>
            </div>
         </header>
-        <div id="main" layout="" horizontal="" start="">
-            <div flex="">
+        <div id="main" layout horizontal start>
+            <div flex>
                 <app-router>
-                    <app-route path="/" element="page-home"></app-route>
-                    <app-route path="/home" element="page-home"></app-route>
+                    <app-route path="/"             element="page-home"></app-route>
+                    <app-route path="/home"         element="page-home"></app-route>
                     <app-route path="/presentation" element="page-presentation"></app-route>
-                    <app-route path="/users" element="page-users"></app-route>
-                    <app-route path="/projects" element="page-projects"></app-route>
-                    <app-route path="/users/:id" element="page-user"></app-route>
+                    <app-route path="/users"        element="page-users"></app-route>
+                    <app-route path="/projects"     element="page-projects"></app-route>
+                    <app-route path="/users/:id"    element="page-user"></app-route>
                     <app-route path="/projects/:id" element="page-project"></app-route>
-                    <app-route path="*" element="page-error404"></app-route>
+                    <app-route path="*"             element="page-error404"></app-route>
                 </app-router>
             </div>
             <labeli-sidebar id="sidebar"></labeli-sidebar>
@@ -82,5 +84,5 @@
                 });
             }
         </script>
-    
-</body></html>
+    </body>
+</html>

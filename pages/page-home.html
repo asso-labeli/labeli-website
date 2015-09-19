@@ -1,6 +1,6 @@
 <link rel="import" href="/bower_components/polymer/polymer.html">
 
-<polymer-element name="page-home">
+<dom-module id="page-home">
     <template>
         <link rel="stylesheet" href="../style.css" />
         <style>
@@ -71,6 +71,7 @@
     <script>
         Polymer(
         {
+            is : "page-home",
             projects :
             [
                 {name : "Projet1", rating : "big", type : "event", author : {firstName : "Alix", lastName : "Fumoleau"}},
@@ -110,4 +111,4 @@
             }
         });
     </script>
-</polymer-element>
+</dom-module>

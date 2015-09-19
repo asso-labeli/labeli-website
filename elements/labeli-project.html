@@ -1,6 +1,6 @@
 <link rel="import" href="/bower_components/polymer/polymer.html">
 
-<polymer-element name="labeli-project">
+<dom-module id="labeli-project">
     <template>
         <style>
             :host
@@ -13,7 +13,7 @@
                 display : flex;
                 flex-flow: column-reverse;
                 box-shadow : 0px 1px 3px rgba(0,0,0,0.33);
-/*                border : 1px solid white;*/
+                /*                border : 1px solid white;*/
                 cursor : pointer;
                 opacity : 0;
                 transition : opacity 0.33s;
@@ -57,7 +57,7 @@
             }
         </style>
         <div class="info" layout horizontal center>
-            
+
             <template if="{{project.type == 'app'}}"><core-icon icon="apps"></core-icon></template>
             <template if="{{project.type == 'event'}}"><core-icon icon="event"></core-icon></template>
             <template if="{{project.type == 'team'}}"><core-icon icon="social:group"></core-icon></template>
@@ -69,15 +69,16 @@
     </template>
     <script>
         Polymer(
-        {
-            publish :
-            {
-                project : null
-            },
-            projectChanged : function(oldValue, newValue)
-            {
-                this.className = this.className+" "+newValue.type;
-            }
-        });
+                {
+                    is: "labeli-project",
+                    publish:
+                            {
+                                project: null
+                            },
+                    projectChanged: function (oldValue, newValue)
+                    {
+                        this.className = this.className + " " + newValue.type;
+                    }
+                });
     </script>
-</polymer-element>
+</dom-module>

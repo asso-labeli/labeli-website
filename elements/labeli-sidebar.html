@@ -1,6 +1,6 @@
 <link rel="import" href="/bower_components/polymer/polymer.html">
 
-<polymer-element name="labeli-sidebar">
+<dom-module id="labeli-sidebar">
     <template>
         <link rel="stylesheet" href="../style.css" />
         <style>
@@ -45,8 +45,8 @@
                     <h2>Connexion</h2>
                     <input type="text" name="username" placeholder="Identifiant" />
                     <input type="password" name="password" placeholder="Mot de passe" />
-                    <button id="button" is="labeli-button" icon="account-box" text="Connexion" successText="Connecté" loadingText="Vérification" errorText="Identifiants invalides"></labeli-button>
-                </ajax-form>
+                    <button id="button" is="labeli-button" icon="account-box" text="Connexion" successText="Connecté" loadingText="Vérification" errorText="Identifiants invalides"></button>
+                    </ajax-form>
             </template>
             <template bind if="{{user != null}}">
                 <div layout vertical stretch>
@@ -59,47 +59,45 @@
     </template>
     <script>
         Polymer(
-        {
-            app : null,
-            show : true,
-            user : null,
-            ready : function()
-            {
-                this.app = window.app;
-            },
-            loginStart : function()
-            {
-                this.shadowRoot.querySelector("#button").loading();
-            },
-            loginEnd : function(event)
-            {
-                //user = JSON.parse(event.detail.responseText);
-                var user = {userId : 1, privateKey : "test", firstName : "Alix", lastName : "Fumoleau"};
-                if(user == null)
-                    this.shadowRoot.querySelector("#button").error();
-                else
                 {
-                    currentUser = user;
-                    this.user = user;
-                    localStorage.setItem("userId", user._id);
-                    localStorage.setItem("privateKey", user.privateKey);
-                    this.shadowRoot.querySelector("#button").success();
-                }
-            },
-            logout : function()
-            {
-                sidebar = this;
-                app.api('DELETE', '/auth', [], function(result)
-                {
-                        currentUser = null;
-                        sidebar.user = null;
-                        sidebar.shadowRoot.querySelector("#logoutButton").success();
+                    is: "labeli-sidebar",
+                    app: null,
+                    show: true,
+                    user: null,
+                    ready: function ()
+                    {
+                        this.app = window.app;
+                    },
+                    loginStart: function ()
+                    {
+                        this.shadowRoot.querySelector("#button").loading();
+                    },
+                    loginEnd: function (event)
+                    {
+                        //user = JSON.parse(event.detail.responseText);
+                        var user = {userId: 1, privateKey: "test", firstName: "Alix", lastName: "Fumoleau"};
+                        if (user == null)
+                            this.shadowRoot.querySelector("#button").error();
+                        else
+                        {
+                            currentUser = user;
+                            this.user = user;
+                            localStorage.setItem("userId", user._id);
+                            localStorage.setItem("privateKey", user.privateKey);
+                            this.shadowRoot.querySelector("#button").success();
+                        }
+                    },
+                    logout: function ()
+                    {
+                        sidebar = this;
+                        app.api('DELETE', '/auth', [], function (result)
+                        {
+                            currentUser = null;
+                            sidebar.user = null;
+                            sidebar.shadowRoot.querySelector("#logoutButton").success();
+                        });
+                        this.shadowRoot.querySelector("#logoutButton").loading();
+                    }
                 });
-                this.shadowRoot.querySelector("#logoutButton").loading();
-            }
-        });
     </script>
-</polymer-element>
-
-
-         
+</dom-module>

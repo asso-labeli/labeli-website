@@ -1,6 +1,6 @@
 <link rel="import" href="/bower_components/polymer/polymer.html">
 
-<polymer-element name="labeli-user">
+<dom-module id="labeli-user">
     <template>
         <style>
             :host
@@ -19,12 +19,13 @@
     </template>
     <script>
         Polymer(
-        {
-            publish : 
-            {
-                firstName : "",
-                lastName : "",
-            }
-        });
+                {
+                    is: "labeli-user",
+                    publish:
+                            {
+                                firstName: "",
+                                lastName: "",
+                            }
+                });
     </script>
-</polymer-element>
+</dom-module>
